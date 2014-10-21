@@ -16,7 +16,7 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 
-public class ECSKESWSLogger {
+public class ECSKESWSFileLogger {
 
     static private FileHandler fileTxt;
     static private SimpleFormatter formatterTxt;

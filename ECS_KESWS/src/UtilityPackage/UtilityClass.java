@@ -36,7 +36,10 @@ public class UtilityClass {
     }
 
 
-
+/**
+ * 
+ * @return current date yyyyMMddHHmmss
+ */
     public String getCurrentTime() {
         Date curdate = new Date();
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyyMMddHHmmss");

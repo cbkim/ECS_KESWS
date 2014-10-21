@@ -1,0 +1,6 @@
+*** Starting Profile: Constructor(String[]) ***
+Profile: In loadMhxInI()
+Profile: java.io.FileNotFoundException
+Error is File Not Found
+ERR:<15>
+MHAccess:out:requestStatus=-1|ErrorCode=15|ErrorMsg=File Not Found,  file: ecs_kesws/MHAccess/mhx.ini

@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import logger.ECSKESWSLogger;
+import logger.ECSKESWSFileLogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -42,8 +42,8 @@ final public class ConfigMapper {
         try {
             File fXmlFile = new File("config.xml");
             FilesTypestoReceive = new ArrayList<String>();
-            //  System.out.println("Config file path "+fXmlFile.getAbsolutePath());
-            // ECSKESWSLogger.Log(fXmlFile.getAbsolutePath());
+           System.out.println("Config file path "+fXmlFile.getAbsolutePath());
+           //ECSKESWSFileLoggergger.Log(fXmlFile.getAbsolutePath());
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(fXmlFile);

@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
-import logger.ECSKESWSLogger;
+import logger.ECSKESWSFileLogger;
 import databaselayer.DBDAO;
 import xmlmapper.XmlFileMapper;
 import xmlparser.ECSConsignmentDoc;
@@ -27,7 +27,7 @@ import xmlmapper.XMLFileValidator;
  * @author kim
  *
  */
-public class IncomingMessageProcessor extends Thread {
+public class IncomingMessageProcessor implements Runnable {
 
     private XmlFileMapper mapper;
     private DBDAO dbao;
@@ -46,7 +46,7 @@ public class IncomingMessageProcessor extends Thread {
 
                     fileprocessor = new FileProcessor();
                     try{
-                    fileprocessor.retrieveMessage(ConfigMapper.getMHXUserProfileFilePath(), ConfigMapper.getSenderId(), ConfigMapper.getInboxFolder(), true);
+                //   fileprocessor.retrieveMessage(ConfigMapper.getMHXUserProfileFilePath(), ConfigMapper.getSenderId(), ConfigMapper.getInboxFolder(), true);
                     }
                     catch (Exception e){
                         e.printStackTrace();
@@ -106,7 +106,7 @@ public class IncomingMessageProcessor extends Thread {
                                         boolean validfile = false;
                                         boolean validfilefortransaction = false;
                                         XMLFileValidator xmlvalidator = new XMLFileValidator();
-                                        validfile = xmlvalidator.validateAgainstXSD(ConfigMapper.getInboxFolder() + fileName, "C:\\ECSKESWS\\service\\MDA_CommonTypes1.xsd", "C:\\ECSKESWS\\service\\CONDOC1.xsd");
+                                        validfile = xmlvalidator.validateAgainstXSD(ConfigMapper.getInboxFolder() + fileName, "/ecs_kesws/service/MDA_CommonTypes1.xsd", "/ecs_kesws/service/CONDOC1.xsd");
                                         if (validfile) {
                                             validfilefortransaction = true;
                                             dbao.trackTransactionDetails("FILESTATUS", " ", 1, " ", " ", "VALID FILE", fileName);
@@ -171,6 +171,7 @@ public class IncomingMessageProcessor extends Thread {
 
                                                 }
                                             }
+                                             
 
                                         }
 
@@ -252,7 +253,7 @@ public class IncomingMessageProcessor extends Thread {
         }
     }
 
-    public void stopIncomingMessageProcessor() {
+   public void stopIncomingMessageProcessor() {
         stop = true;
     }
 }

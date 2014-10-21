@@ -12,7 +12,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import logger.ECSKESWSLogger;
+import logger.ECSKESWSFileLogger;
 import xmlparser.KEPHISECSConsignmentInspectionReport;
 import xmlparser.KESWSConsignmentDoc;
 import databaselayer.DBDAO;
@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class OutgoingMessageProcessor extends Thread {
+public class OutgoingMessageProcessor implements Runnable {
 
     private volatile boolean stop = false;// used to stop thread
     private static Lock lock = new ReentrantLock();//locking mechanism to have just one thread run
@@ -42,34 +42,13 @@ public class OutgoingMessageProcessor extends Thread {
                 FileProcessor fileprocessor = new FileProcessor();
                 List<String> filesinQue = new ArrayList<String>();
                 while (!stop && !endthread) {
-                    fileprocessor.readFilesBeingProcessed(ConfigMapper.getProcessingFolder());
+                   fileprocessor.readFilesBeingProcessed(ConfigMapper.getProcessingFolder());
                     List<String> filespendingprocessing = fileprocessor.getFilesbeingProcessed();
                     for (Iterator<String> iterator = filespendingprocessing.iterator(); iterator.hasNext();) {
                         String fileName = (String) iterator.next();
                         String deleteFile = "";
-                        if (fileName.contains(ConfigMapper.getFilesTypestoReceive().get(0).toString())
-                                || fileName.contains(ConfigMapper.getFilesTypestoReceive().get(1).toString())
-                                || fileName.contains(ConfigMapper.getFilesTypestoReceive().get(2).toString())
-                                || fileName.contains(ConfigMapper.getFilesTypestoReceive().get(3).toString())
-                                || fileName.contains(ConfigMapper.getFilesTypestoReceive().get(4).toString())
-                                || fileName.contains(ConfigMapper.getFilesTypestoReceive().get(5).toString())
-                                || fileName.contains(ConfigMapper.getFilesTypestoReceive().get(6).toString())
-                                || fileName.contains(ConfigMapper.getFilesTypestoReceive().get(7).toString())
-                                || fileName.contains(ConfigMapper.getFilesTypestoReceive().get(8).toString())
-                                || fileName.contains(ConfigMapper.getFilesTypestoReceive().get(9).toString())
-                                || fileName.contains(ConfigMapper.getFilesTypestoReceive().get(10).toString())
-                                || fileName.contains(ConfigMapper.getFilesTypestoReceive().get(11).toString())
-                                || fileName.contains(ConfigMapper.getFilesTypestoReceive().get(12).toString())
-                                || fileName.contains(ConfigMapper.getFilesTypestoReceive().get(13).toString())
-                                || fileName.contains(ConfigMapper.getFilesTypestoReceive().get(14).toString())
-                                || fileName.contains(ConfigMapper.getFilesTypestoReceive().get(15).toString())
-                                || fileName.contains(ConfigMapper.getFilesTypestoReceive().get(16).toString())
-                                || fileName.contains(ConfigMapper.getFilesTypestoReceive().get(17).toString())
-                                || fileName.contains(ConfigMapper.getFilesTypestoReceive().get(18).toString())
-                                || fileName.contains(ConfigMapper.getFilesTypestoReceive().get(19).toString())
-                                || fileName.contains(ConfigMapper.getFilesTypestoReceive().get(20).toString())
-                                || fileName.contains(ConfigMapper.getFilesTypestoReceive().get(21).toString())
-                                || fileName.contains(ConfigMapper.getFilesTypestoReceive().get(22).toString())) {
+                        if (fileName.contains(ConfigMapper.getFilesTypestoReceive().get(0).toString()) 
+                          ) {
                             JAXBContext context = null;
                             try {
                                 context = JAXBContext.newInstance(KESWSConsignmentDoc.class);
@@ -243,12 +222,12 @@ public class OutgoingMessageProcessor extends Thread {
 
                                     if (diffMinutes > 30) {
                                         //email inspector
-                                       // ECSKESWSLogger.mailnotification("Kindly check the consignment " + InvoiceNumber + " on ecs it has been pending for 1/2 hour");
+                                      ECSKESWSFileLogger.mailnotification("Kindly check the consignment " + InvoiceNumber + " on ecs it has been pending for 1/2 hour");
 
                                     }
                                     if (diffHours > 1) {
                                         //email it support
-                                       // ECSKESWSLogger.mailnotification("Kindly check the consignment " + InvoiceNumber + " on ecs it has been pending for 1 hour and will be deleted in one hours time");
+                                  ECSKESWSFileLogger.mailnotification("Kindly check the consignment " + InvoiceNumber + " on ecs it has been pending for 1 hour and will be deleted in one hours time");
 
 
                                     }
@@ -263,7 +242,7 @@ public class OutgoingMessageProcessor extends Thread {
 
                             } catch (Exception e) {
                                 e.printStackTrace();
-                                ECSKESWSLogger.Log(e.toString(),"SEVERE");
+                    ECSKESWSFileLogger.Log(e.toString(),"SEVERE");
                             }
 
                         }

@@ -2,7 +2,7 @@ package databaselayer;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import logger.ECSKESWSLogger;
+import logger.ECSKESWSFileLogger;
 import ECSKESWSService.ConfigMapper;
 import com.jolbox.bonecp.BoneCP;
 import com.jolbox.bonecp.BoneCPConfig;
@@ -33,14 +33,17 @@ public class DBConnector {
             config.setMaxConnectionsPerPartition(10);
              config.setPartitionCount(1);
             config.setDetectUnclosedStatements(true);
-            config.setMaxConnectionAge(30, TimeUnit.SECONDS);
+            config.setMaxConnectionAge(30);
             config.setCloseOpenStatements(true);
             connectionPool = new BoneCP(config);
             conn = connectionPool.getConnection();
+            
         } catch (Exception e) {
+            
             e.printStackTrace();
-            ECSKESWSLogger.Log(e.toString(), "SEVERE");
+            ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
         }
+         connectionPool.shutdown();
         return conn;
     }
 
@@ -49,7 +52,7 @@ public class DBConnector {
         try {
             conn.close();
         } catch (SQLException ex) {
-            ECSKESWSLogger.Log(ex.toString(), "SEVERE");
+            ECSKESWSFileLogger.Log(ex.toString(), "SEVERE");
         }
     }
 }

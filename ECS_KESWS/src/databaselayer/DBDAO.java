@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import logger.ECSKESWSLogger;
+import logger.ECSKESWSFileLogger;
 import xmlmapper.XmlFileMapper;
 import xmlparser.ECSConsignmentDoc;
 import xmlparser.KESWSConsignmentDoc;
@@ -172,7 +172,7 @@ public class DBDAO {
                 stmt.executeUpdate();
             } catch (Exception e) {
                 e.printStackTrace();
-                ECSKESWSLogger.Log(e.toString(), "SEVERE");
+                ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
             }
             try {
                 p_status = "SUBMITTED";
@@ -191,13 +191,13 @@ public class DBDAO {
                 conn.close();
             } catch (Exception e) {
                 e.printStackTrace();
-                ECSKESWSLogger.Log(e.toString(), "SEVERE");
+                ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
             }
 
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            ECSKESWSLogger.Log(e.toString(), "SEVERE");
+            ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
         } finally {
 
             dao.CloseECSDBConnector();
@@ -226,7 +226,10 @@ public class DBDAO {
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            ECSKESWSLogger.Log(e.toString(), "SEVERE");
+            ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
+        } finally {
+            dao.CloseECSDBConnector();
+
         }
         return clientId;
     }
@@ -300,9 +303,11 @@ public class DBDAO {
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            ECSKESWSLogger.Log(e.toString(), "SEVERE");
-        }
+            ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
+        } finally {
+            dao.CloseECSDBConnector();
 
+        }
     }
 
     public void createClientDetails(KESWSConsignmentDoc SourceDoc) {
@@ -426,7 +431,10 @@ public class DBDAO {
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            ECSKESWSLogger.Log(e.toString(), "SEVERE");
+            ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
+        } finally {
+            dao.CloseECSDBConnector();
+
         }
 
     }
@@ -524,7 +532,10 @@ public class DBDAO {
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            ECSKESWSLogger.Log(e.toString(), "SEVERE");
+            ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
+        } finally {
+            dao.CloseECSDBConnector();
+
         }
         if (ConsigneeIdRef.intValue() == consigneeId) {
             return consigneeId;
@@ -542,12 +553,12 @@ public class DBDAO {
 
         boolean responsestatus = false;
         int response1status = 1;
-
+        DBConnector dao = new DBConnector();
+        Connection conn = dao.GetECSDBConnector();
         try {
             Statement stmt = null;
             String sql;
-            DBConnector dao = new DBConnector();
-            Connection conn = dao.GetECSDBConnector();
+
             stmt = conn.createStatement();
             sql = "SELECT RESPONSE1STATUS FROM `INTKESWSECSTRANSACTIONS` WHERE `RECEIVEDFILEDETAILS` LIKE '%"
                     + fileName + "%';";
@@ -566,8 +577,10 @@ public class DBDAO {
 
         } catch (SQLException ex) {
             Logger.getLogger(DBDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } finally {
+            dao.CloseECSDBConnector();
 
+        }
         return responsestatus;
     }
 
@@ -578,11 +591,12 @@ public class DBDAO {
         int response2status = 0;
         String response1time = utilclass.getCurrentTime();
         String response2time = utilclass.getCurrentTime();
+        DBConnector dao = new DBConnector();
+        Connection conn = dao.GetECSDBConnector();
         try {
             Statement stmt = null;
             String sql;
-            DBConnector dao = new DBConnector();
-            Connection conn = dao.GetECSDBConnector();
+
             stmt = conn.createStatement();
             sql = "SELECT RESPONSE1STATUS,REPONSE1TIME,RESPONSE2STATUS,REPONSE2TIME FROM `INTKESWSECSTRANSACTIONS` WHERE `RECEIVEDFILEDETAILS` LIKE '%"
                     + fileName + "%';";
@@ -646,6 +660,9 @@ public class DBDAO {
 
         } catch (ParseException ex) {
             Logger.getLogger(DBDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            dao.CloseECSDBConnector();
+
         }
         return responsestatus;
     }
@@ -668,6 +685,10 @@ public class DBDAO {
             } catch (SQLException ex) {
                 Logger.getLogger(DBDAO.class.getName()).log(Level.SEVERE, null, ex);
             }
+            finally {
+            dao.CloseECSDBConnector();
+
+        }
 
         }
         if (response.startsWith("RESPONSE2STATUS")) {
@@ -684,7 +705,10 @@ public class DBDAO {
             } catch (SQLException ex) {
                 Logger.getLogger(DBDAO.class.getName()).log(Level.SEVERE, null, ex);
             }
+finally {
+            dao.CloseECSDBConnector();
 
+        }
         }
 
     }
@@ -774,8 +798,12 @@ public class DBDAO {
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            ECSKESWSLogger.Log(e.toString(), "SEVERE");
+            ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
             return insertkey;
+        }
+        finally {
+            dao.CloseECSDBConnector();
+
         }
 
     }
@@ -828,7 +856,7 @@ public class DBDAO {
                 long diffHours = diff / (60 * 60 * 1000) % 24;
                 //System.out.println("SUBMITTED STATUS  " + fileName + " relatedTransactionId " + relatedTransactionId.intValue());
                 if (relatedTransactionId == 0) {
-                 if (transTypedetails1.length() < 10) {
+                    if (transTypedetails1.length() < 10) {
                         transTypedetails1 = transactionDetails;
                     }
                     if (transTypedetails1.length() > 10) {
@@ -855,14 +883,14 @@ public class DBDAO {
                     sql = "UPDATE `INTKESWSECSTRANSACTIONS` SET "
                             + "`TRANSACTIONDETAILS` ='" + transTypedetails1 + "',"
                             + "`ADDITIONALTRANSACTIONDETAILS` = '" + addetails2 + addetails1 + "'"
-                            + " WHERE `RECEIVEDFILEDETAILS` = '" + fileName + "';"; 
+                            + " WHERE `RECEIVEDFILEDETAILS` = '" + fileName + "';";
                     // System.out.println("SUBMITTED STATUS  " + fileName + " sql " + sql);
                     stmt2.executeUpdate(sql);
                     System.out.println(sql);
                 }
 
             }
-            if (transactionType.startsWith("PLANNEDINSPECTIONSTATUS")) { 
+            if (transactionType.startsWith("PLANNEDINSPECTIONSTATUS")) {
                 Statement stmt2 = null;
                 Date date1 = new Date(Integer.parseInt(additionalDetails.substring(0, 4)), Integer.parseInt(additionalDetails.substring(4, 6)), Integer.parseInt(additionalDetails.substring(6, 8)), Integer.parseInt(additionalDetails.substring(8, 10)), Integer.parseInt(additionalDetails.substring(10, 12)));
                 Date date2 = new Date(Integer.parseInt(utilclass.getCurrentTime().substring(0, 4)), Integer.parseInt(utilclass.getCurrentTime().substring(4, 6)), Integer.parseInt(utilclass.getCurrentTime().substring(6, 8)), Integer.parseInt(utilclass.getCurrentTime().substring(8, 10)), Integer.parseInt(utilclass.getCurrentTime().substring(10, 12)));
@@ -1090,6 +1118,10 @@ public class DBDAO {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        finally {
+            dao.CloseECSDBConnector();
+
+        }
     }
 
     public int getLastTransactionId() {
@@ -1111,7 +1143,10 @@ public class DBDAO {
 
             return lastid;
         }
+finally {
+            dao.CloseECSDBConnector();
 
+        }
     }
 
     public void createECSconsignmentCertificate(Integer CGT_ID) {
@@ -1129,9 +1164,12 @@ public class DBDAO {
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            ECSKESWSLogger.Log(e.toString(), "SEVERE");
+            ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
         }
-        ;
+        finally {
+            dao.CloseECSDBConnector();
+
+        }
     }
 
     public int getLastProducerId() {
@@ -1153,7 +1191,11 @@ public class DBDAO {
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            ECSKESWSLogger.Log(e.toString(), "SEVERE");
+            ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
+        }
+        finally {
+            dao.CloseECSDBConnector();
+
         }
         return producerId + 1;
     }
@@ -1239,7 +1281,11 @@ public class DBDAO {
         } catch (SQLException e) {
 
             e.printStackTrace();
-            ECSKESWSLogger.Log(e.toString(), "SEVERE");
+            ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
+        }
+        finally {
+            dao.CloseECSDBConnector();
+
         }
         return iscreated;
     }
@@ -1358,9 +1404,7 @@ public class DBDAO {
                     durationsAndTemperature = " ";
                     concentrationActiveIngredients = " ";
                 }
-
-                System.out.println("output " + TreatmentDate.length());
-
+                 
                 stmt = conn.createStatement();
                 if (TreatmentDate.length() == 0) {
                     String sql = "insert into VARIETYQUANTITY (CSG_ID,CTY_ID,CVA_ID,QUANTITY_ORIGINAL,UNIT_ID,NUMBER_OF_PACKAGES,TOP_ID,TREATMENT_DETAILS,TREATMENT_DATE,CHEMICAL_INGREDIANTS,DURATION_TEMPARATURE,CONCENTRATION,ORIGIN_CNT_ID,PRD_ID,CGT_ID,CFO_ID) values ('"
@@ -1436,8 +1480,12 @@ public class DBDAO {
             } catch (SQLException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
-                ECSKESWSLogger.Log(e.toString(), "SEVERE");
+                ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
             }
+            finally {
+            dao.CloseECSDBConnector();
+
+        }
 
         }
 
@@ -1464,10 +1512,13 @@ public class DBDAO {
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            ECSKESWSLogger.Log(e.toString(), "SEVERE");
+            ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
 
         }
+finally {
+            dao.CloseECSDBConnector();
 
+        }
         return MeansOfConveyance;
     }
 
@@ -1516,7 +1567,11 @@ public class DBDAO {
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            ECSKESWSLogger.Log(e.toString(), "SEVERE");
+            ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
+        }
+        finally {
+            dao.CloseECSDBConnector();
+
         }
         return "" + packageId + "";
 
@@ -1572,7 +1627,11 @@ public class DBDAO {
         } catch (SQLException e) {
 
             e.printStackTrace();
-            ECSKESWSLogger.Log(e.toString(), "SEVERE");
+            ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
+        }
+        finally {
+            dao.CloseECSDBConnector();
+
         }
         return iscreated;
 
@@ -1627,7 +1686,11 @@ public class DBDAO {
         } catch (SQLException e) {
 
             e.printStackTrace();
-            ECSKESWSLogger.Log(e.toString(), "SEVERE");
+            ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
+        }
+        finally {
+            dao.CloseECSDBConnector();
+
         }
         return iscreated;
 
@@ -1666,9 +1729,12 @@ public class DBDAO {
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            ECSKESWSLogger.Log(e.toString(), "SEVERE");
+            ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
         }
+finally {
+            dao.CloseECSDBConnector();
 
+        }
         System.out.print("UNIT ID " + VAQUnitId + " Unit" + unitOfQty);
         return "" + VAQUnitId + "";
     }
@@ -1693,11 +1759,20 @@ public class DBDAO {
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            ECSKESWSLogger.Log(e.toString(), "SEVERE");
+            ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
+        }
+        finally {
+            dao.CloseECSDBConnector();
+
         }
         return eCSConsignmentInspectionFinding;
     }
 
+    /**
+     * todo use mysql_insert_id()
+     *
+     * @return
+     */
     public int getCreatedECSconsignmentId() {
         int createdECSconsignmentId = 0;
         DBConnector dao = new DBConnector();
@@ -1715,7 +1790,7 @@ public class DBDAO {
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            ECSKESWSLogger.Log(e.toString(), "SEVERE");
+            ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
         }
         return createdECSconsignmentId;
     }
@@ -1738,7 +1813,7 @@ public class DBDAO {
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            ECSKESWSLogger.Log(e.toString(), "SEVERE");
+            ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
         }
         return eCSconsignmentStatus;
     }
@@ -1761,7 +1836,11 @@ public class DBDAO {
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            ECSKESWSLogger.Log(e.toString(), "SEVERE");
+            ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
+        }
+        finally {
+            dao.CloseECSDBConnector();
+
         }
         return eCSconsignmentStatus;
     }
@@ -1785,7 +1864,11 @@ public class DBDAO {
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            ECSKESWSLogger.Log(e.toString(), "SEVERE");
+            ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
+        }
+        finally {
+            dao.CloseECSDBConnector();
+
         }
         return eCSconsignmentStatus;
     }
@@ -1808,7 +1891,11 @@ public class DBDAO {
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            ECSKESWSLogger.Log(e.toString(), "SEVERE");
+            ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
+        }
+        finally {
+            dao.CloseECSDBConnector();
+
         }
         return eCSconsignmentDocuments;
     }
@@ -1829,152 +1916,112 @@ public class DBDAO {
         //KUEHNE+NAGEL LIMITED
         if (warehouseCode.contains("BNBI493") || warehouseLocation.contains("BNBI493")) {
             inLocId = 1;
-        }
-        //Airflo Ltd
+        } //Airflo Ltd
         else if (warehouseCode.contains("AIRFLOL") || warehouseLocation.contains("AIRFLOL")) {
             inLocId = 2;
-        }
-        //Skytrain Ltd
+        } //Skytrain Ltd
         else if (warehouseCode.contains("SKYTRAI") || warehouseLocation.contains("SKYTRAI")) {
             inLocId = 3;
-        }
-        //Sunripe (1976) Ltd
-       else  if (warehouseCode.contains("SUNRIPE") || warehouseLocation.contains("SUNRIPE")) {
+        } //Sunripe (1976) Ltd
+        else if (warehouseCode.contains("SUNRIPE") || warehouseLocation.contains("SUNRIPE")) {
             inLocId = 4;
-        }
-        //Total Touch Cargo Ltd
-       else  if (warehouseCode.contains("TTCCARL") || warehouseLocation.contains("TTCCARL")) {
+        } //Total Touch Cargo Ltd
+        else if (warehouseCode.contains("TTCCARL") || warehouseLocation.contains("TTCCARL")) {
             inLocId = 5;
-        }
-        //Swissport Cargo Services Ltd
+        } //Swissport Cargo Services Ltd
         else if (warehouseCode.contains("SWISSPO") || warehouseLocation.contains("SWISSPO")) {
             inLocId = 6;
-        }
-        //Air Connection Ltd
+        } //Air Connection Ltd
         else if (warehouseCode.contains("Air Connection") || warehouseLocation.contains("Air Connection")) {
             inLocId = 7;
-        }
-        //Flowerwings (K) Ltd
+        } //Flowerwings (K) Ltd
         else if (warehouseCode.contains("FLOWING") || warehouseLocation.contains("FLOWING")) {
             inLocId = 8;
-        }
-        //Schenker Kenya Ltd
+        } //Schenker Kenya Ltd
         else if (warehouseCode.contains("SCHENKE") || warehouseLocation.contains("SCHENKE")) {
             inLocId = 9;
-        }
-        //General Freighters Ltd
+        } //General Freighters Ltd
         else if (warehouseCode.contains("GENFREI") || warehouseLocation.contains("GENFREI")) {
             inLocId = 10;
-        }
-        //Greenlands Agroproducers (EPZ) Ltd
-       else  if (warehouseCode.contains("GREENLA") || warehouseLocation.contains("GREENLA")) {
+        } //Greenlands Agroproducers (EPZ) Ltd
+        else if (warehouseCode.contains("GREENLA") || warehouseLocation.contains("GREENLA")) {
             inLocId = 12;
-        }
-        //Makindu Growers and Packers Ltd
-       else  if (warehouseCode.contains("MAKINDU") || warehouseLocation.contains("MAKINDU")) {
+        } //Makindu Growers and Packers Ltd
+        else if (warehouseCode.contains("MAKINDU") || warehouseLocation.contains("MAKINDU")) {
             inLocId = 13;
-        }
-        //East Africa Growers Kenya Ltd
-       else  if (warehouseCode.contains("EAGAAFR") || warehouseLocation.contains("EAGAAFR")) {
+        } //East Africa Growers Kenya Ltd
+        else if (warehouseCode.contains("EAGAAFR") || warehouseLocation.contains("EAGAAFR")) {
             inLocId = 14;
-        }
-        //Wilham (K) Ltd
-       else  if (warehouseCode.contains("WILHAM") || warehouseLocation.contains("WILHAM")) {
+        } //Wilham (K) Ltd
+        else if (warehouseCode.contains("WILHAM") || warehouseLocation.contains("WILHAM")) {
             inLocId = 15;
-        }
-        //Vegpro(K) Ltd
-       else  if (warehouseCode.contains("VEGPROK") || warehouseLocation.contains("VEGPROK")) {
+        } //Vegpro(K) Ltd
+        else if (warehouseCode.contains("VEGPROK") || warehouseLocation.contains("VEGPROK")) {
             inLocId = 16;
-        }
-        //African Cargo Handling Ltd
-       else  if (warehouseCode.contains("TJKA001") || warehouseLocation.contains("TJKA001")) {
+        } //African Cargo Handling Ltd
+        else if (warehouseCode.contains("TJKA001") || warehouseLocation.contains("TJKA001")) {
             inLocId = 17;
-        }
-        //Kenya Airfreight Handling Ltd
+        } //Kenya Airfreight Handling Ltd
         else if (warehouseCode.contains("KAHL") || warehouseLocation.contains("KAHL")) {
             inLocId = 18;
-        }
-        //Transglobal Cargo Centre Ltd
-       else  if (warehouseCode.contains("TRANSG") || warehouseLocation.contains("TRANSG")) {
+        } //Transglobal Cargo Centre Ltd
+        else if (warehouseCode.contains("TRANSG") || warehouseLocation.contains("TRANSG")) {
             inLocId = 19;
-        }
-        //Everest enterprises Ltd
+        } //Everest enterprises Ltd
         else if (warehouseCode.contains("EVEREST") || warehouseLocation.contains("EVEREST")) {
             inLocId = 20;
-        }
-
-        //KAKUZI
+        } //KAKUZI
         else if (warehouseCode.contains("KAKUZI") || warehouseLocation.contains("KAKUZI")) {
             inLocId = 21;
-        }
-        //KEPHIS Naivasha
-       else  if (warehouseCode.contains("NAIVASHA") || warehouseLocation.contains("NAIVASHA")) {
+        } //KEPHIS Naivasha
+        else if (warehouseCode.contains("NAIVASHA") || warehouseLocation.contains("NAIVASHA")) {
             inLocId = 22;
-        }
-        //C. DORMAN
+        } //C. DORMAN
         else if (warehouseCode.contains("DORMAN") || warehouseLocation.contains("DORMAN")) {
             inLocId = 23;
-        }
-        //AFRICOFF TRADING CO LTD
-       else  if (warehouseCode.contains("AFRICOFF") || warehouseLocation.contains("AFRICOFF")) {
+        } //AFRICOFF TRADING CO LTD
+        else if (warehouseCode.contains("AFRICOFF") || warehouseLocation.contains("AFRICOFF")) {
             inLocId = 24;
-        }
-        //TAYLORWINCH COFFEE LTD
+        } //TAYLORWINCH COFFEE LTD
         else if (warehouseCode.contains("TAYLORW") || warehouseLocation.contains("TAYLORW")) {
             inLocId = 25;
-        }
-        //*************************************SDV NAIROBI DOES NOT EXIST IN THE***************************************************************
+        } //*************************************SDV NAIROBI DOES NOT EXIST IN THE***************************************************************
         else if (warehouseCode.contains("SDV NAIROBI") || warehouseLocation.contains("SDV NAIROBI")) {
             inLocId = 26;
-        }
-        //Plant Quarantine and Biosafety Station
-       else  if (warehouseCode.contains("PQBSMUG") || warehouseLocation.contains("PQBSMUG")) {
+        } //Plant Quarantine and Biosafety Station
+        else if (warehouseCode.contains("PQBSMUG") || warehouseLocation.contains("PQBSMUG")) {
             inLocId = 27;
-        }
-        //KEPHIS MOMBASA********************************KEPIS MOMBASA DOES NOT EXIST IN THE LIST******************************************************CHECK THIS
-       else  if (warehouseCode.contains("KEPHIS MOMBASA") || warehouseLocation.contains("KEPHIS MOMBASA")) {
+        } //KEPHIS MOMBASA********************************KEPIS MOMBASA DOES NOT EXIST IN THE LIST******************************************************CHECK THIS
+        else if (warehouseCode.contains("KEPHIS MOMBASA") || warehouseLocation.contains("KEPHIS MOMBASA")) {
             inLocId = 28;
-        }
-        //KEPHIS Nakuru
+        } //KEPHIS Nakuru
         else if (warehouseCode.contains("NAKURU") || warehouseLocation.contains("NAKURU")) {
             inLocId = 29;
-        }
-        //Equatorial Nut Processors
+        } //Equatorial Nut Processors
         else if (warehouseCode.contains("EQUATOR") || warehouseLocation.contains("EQUATOR")) {
             inLocId = 30;
-        }
-
-        //DIAMOND COFFEE CO LTD
+        } //DIAMOND COFFEE CO LTD
         else if (warehouseCode.contains("DIAMOND") || warehouseLocation.contains("DIAMOND")) {
             inLocId = 31;
-        }
-        //KEPHIS Headquarters
+        } //KEPHIS Headquarters
         else if (warehouseCode.contains("KEPHISHQ") || warehouseLocation.contains("KEPHISHQ")) {
             inLocId = 32;
-        }
-        //Kenya Nut Company
+        } //Kenya Nut Company
         else if (warehouseCode.contains("KNC") || warehouseLocation.contains("KNC")) {
             inLocId = 33;
-        }
-        //KEPHIS Kitale
+        } //KEPHIS Kitale
         else if (warehouseCode.contains("KITALE") || warehouseLocation.contains("KITALE")) {
             inLocId = 34;
-        }
-        
-        //Eldoret	Eldoret Airport ( KEPHIS)
+        } //Eldoret	Eldoret Airport ( KEPHIS)
         else if (warehouseCode.contains("ELDORET") || warehouseLocation.contains("ELDORET")) {
             inLocId = 35;
-        }
-        
-        //KEPHIS JKIA
+        } //KEPHIS JKIA
         else if (warehouseCode.contains("PIUJKIA") || warehouseLocation.contains("PIUJKIA")) {
             inLocId = 36;
-        }        
-        
-        //SDV Mombasa	SDV Transami Mombasa********************************************
+        } //SDV Mombasa	SDV Transami Mombasa********************************************
         else if (warehouseCode.contains("SDV MOMBASA")) {
             inLocId = 37;
-        } 
+        }
         Statement stmt;
         try {
             stmt = conn.createStatement();
@@ -1995,7 +2042,7 @@ public class DBDAO {
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
-                    ECSKESWSLogger.Log(e.toString(), "SEVERE");
+                    ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
                 }
 
                 sql = "INSERT INTO `INSPECTIONLOCATION` ( `SHORT_NAME`, `NAME`, `STARTDATE`, `ENDDATE`, `DESCRIPTION`, `STREETNAME`, `NUMBER`, `POSTAL_CODE`, `TOWN`, `CONTACT_PERSON`, `PHONE`, `FAX`, `MAIL`)"
@@ -2031,16 +2078,16 @@ public class DBDAO {
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            ECSKESWSLogger.Log(e.toString(), "SEVERE");
+            ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
+        }
+        finally {
+            dao.CloseECSDBConnector();
+
         }
         return inLocId;
 
     }
 
-    
-    
-    
-    
     public String getECSCOD(String COD) {
         Connection conn;
         String CODISOCODE = null;
@@ -2061,13 +2108,12 @@ public class DBDAO {
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            ECSKESWSLogger.Log(e.toString(), "SEVERE");
+            ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
+        }
+        finally {
+            dao.CloseECSDBConnector();
+
         }
         return CODISOCODE;
     }
-}
-
-enum Warehouses_Locations {
-
-    apple, carrot, mango, orange;
 }

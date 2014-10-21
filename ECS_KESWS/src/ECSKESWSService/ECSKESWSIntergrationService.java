@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import logger.ECSKESWSLogger;
+import logger.ECSKESWSFileLogger;
 
 public class ECSKESWSIntergrationService {
 
@@ -44,12 +44,12 @@ public class ECSKESWSIntergrationService {
 
         stopped = false;
         try {
-            ECSKESWSLogger.setup();
+            ECSKESWSFileLogger.setup();
         } catch (IOException ex) {
             Logger.getLogger(ECSKESWSIntergrationService.class.getName()).log(Level.SEVERE, null, ex);
         }
-      incomingmessageprocessor.start();
-      outgoingmessageprocessor.start();
+      incomingmessageprocessor.run();
+      outgoingmessageprocessor.run();
       System.out.println("Number of active threads from the given thread: " + Thread.activeCount());
         while (!stopped) {
 

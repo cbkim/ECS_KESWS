@@ -20,7 +20,7 @@ import java.util.List;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
-import logger.ECSKESWSLogger;
+import logger.ECSKESWSFileLogger;
 import databaselayer.DBConnector;
 import databaselayer.DBDAO;
 import xmlparser.ECSConsignmentDoc;
@@ -356,7 +356,7 @@ public class XmlFileMapper {
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            ECSKESWSLogger.Log(e.toString(), "SEVERE");
+            ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
         }
         return producerId;
     }

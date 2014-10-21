@@ -15,7 +15,7 @@ import java.util.Properties;
 import java.util.logging.Logger;
 
 import xmlparser.KEPHISECSConsignmentInspectionReport;
-import logger.ECSKESWSLogger;
+import logger.ECSKESWSFileLogger;
 
 import com.sns.base.Response;
 import com.sns.mhx.util.MHAccess;
@@ -58,6 +58,12 @@ public class FileProcessor {
 		}
 		setFilesbeingProcessed(results);
 	}
+        /**
+         * 
+         * @param sourcePathname
+         * @param destPathname
+         * @param files 
+         */
 	public void moveXmlFilesProcessed(String sourcePathname,
 			String destPathname, List<String> files) {
 
@@ -91,7 +97,7 @@ public class FileProcessor {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			ECSKESWSLogger.Log(e.toString(), "SEVERE");
+			ECSKESWSFileLogger.Log(e.toString(), "SEVERE");
 		}
 		}
 	}
@@ -168,7 +174,8 @@ public class FileProcessor {
 	}
 	
 	public boolean retrieveMessage(String userProfileFilePath, String senderId, String responseFilePath, boolean responseFileByMsgId) {
-        MHAccess mhAccess = new MHAccess();
+        
+        MHAccessUnix mhAccess = new MHAccessUnix();
             
         boolean isUserProfileOk = mhAccess.initUser(userProfileFilePath);
         
@@ -176,12 +183,13 @@ public class FileProcessor {
         	
         	  LOGGER.severe("The user profile path " + userProfileFilePath + " is invalid or could not be used");
         	  LOGGER.severe("Failed to retrieve messsages for user");
-                 // ECSKESWSLogger.mailnotification("The user profile path " + userProfileFilePath + " is invalid or could not be used "+"Failed to retrieve messsages for user");
+                 // ECSKESWSFileLogger.mailnotification("The user profile path " + userProfileFilePath + " is invalid or could not be used "+"Failed to retrieve messsages for user");
                   
                   return false;
         }
         
-        // prepare retrieve parameters
+        // prepare retrieve parameters\
+       
         Properties retrieveParameters = new Properties();
         retrieveParameters.put("filename", responseFilePath); // Response file path
         retrieveParameters.put("zipfile", new java.io.File(responseFilePath).getName() + ".zip"); // temp zip file name, will get deleted after use
@@ -233,7 +241,7 @@ public class FileProcessor {
 	}
 	public boolean submitMessage(String userProfileFilePath, String recipientId, String messageFilePath, String[] attachments, 
             String subject, String contentId, String documentType,String attachment) {
-		 MHAccess mhAccess = new MHAccess();
+		 MHAccessUnix mhAccess = new MHAccessUnix();
       
       // Initialze user profile
       boolean isUserProfileOk = mhAccess.initUser(userProfileFilePath);

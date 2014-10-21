@@ -34,7 +34,7 @@ public class LogTester {
   public static void main(String[] args) {
 	  LogTester tester = new LogTester();
     try {
-      ECSKESWSLogger.setup();
+      ECSKESWSFileLogger.setup();
     } catch (IOException e) {
       e.printStackTrace();
       throw new RuntimeException("Problems with creating the log files");

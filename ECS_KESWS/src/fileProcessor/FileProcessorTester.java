@@ -6,7 +6,7 @@ import java.util.Calendar;
 import xmlparser.KESWSConsignmentDoc;
 import ECSKESWSService.ConfigMapper;
 import com.sns.mhx.util.MHAccess;
-import logger.ECSKESWSLogger;
+import logger.ECSKESWSFileLogger;
 
 public class FileProcessorTester {
 	 public static void main(String[] args) throws IOException {
@@ -15,7 +15,7 @@ public class FileProcessorTester {
            System.out.println("consignee:" + consignee);
 		  
 	   // new ConfigMapper();
-           //  ECSKESWSLogger.setup();
+           //  ECSKESWSFileLogger.setup();
              //ECSKESWSLogger.mailnotification("wdwdwdwd");
 		//FileProcessor fileprocessor=new FileProcessor();
 		//fileprocessor.readInboxXmlFilesForProcessor(ConfigMapper.getInboxFolder());

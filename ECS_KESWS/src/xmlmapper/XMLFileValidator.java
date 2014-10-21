@@ -19,11 +19,11 @@ import xmlparser.KESWSConsignmentDoc;
 public class XMLFileValidator {
 
     private String ErrorDetails;
-    
-    public XMLFileValidator(){
-    ErrorDetails =" ";
+
+    public XMLFileValidator() {
+        ErrorDetails = " ";
     }
-    
+
     public String getErrorDetails() {
         return ErrorDetails;
     }
@@ -31,10 +31,8 @@ public class XMLFileValidator {
     public void setErrorDetails(String ErrorDetails) {
         this.ErrorDetails = ErrorDetails;
     }
-    
-    
 
-    public  final boolean validateAgainstXSD(String SourceXml, String xsd, String xsd1) {
+    public final boolean validateAgainstXSD(String SourceXml, String xsd, String xsd1) {
 
         try {
             Source[] schemaFile = new Source[2];
@@ -43,19 +41,18 @@ public class XMLFileValidator {
             Source xmlFile = new StreamSource(new File(SourceXml));
             SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
             Schema schema = schemaFactory.newSchema(schemaFile);
-            
 
             Validator validator = schema.newValidator();
-           
+
             try {
                 validator.validate(xmlFile);
-                   System.out.println(xmlFile.getSystemId() + " is valid");
-                   
+                System.out.println(xmlFile.getSystemId() + " is valid");
+
                 return true;
             } catch (SAXException e) {
-                 System.out.println(xmlFile.getSystemId() + " is NOT valid");
-                  System.out.println("Reason: " + e.getLocalizedMessage());
-                  setErrorDetails("Reason: " + e.getLocalizedMessage().replace("'", " "));
+                System.out.println(xmlFile.getSystemId() + " is NOT valid");
+                System.out.println("Reason: " + e.getLocalizedMessage());
+                setErrorDetails("Reason: " + e.getLocalizedMessage().replace("'", " "));
                 return false;
             } catch (IOException ex) {
                 Logger.getLogger(XMLFileValidator.class.getName()).log(Level.SEVERE, null, ex);
@@ -67,12 +64,15 @@ public class XMLFileValidator {
             setErrorDetails("Reason: " + ex.getLocalizedMessage().replace("'", " "));
             return false;
         }
-       
-   
+        finally
+        {
+            return false;
+        }
     }
+
     public boolean validinternalProductDetails(KESWSConsignmentDoc doc) {
         boolean vpcode = false;
-         UtilityClass uc=new UtilityClass();
+        UtilityClass uc = new UtilityClass();
         List<KESWSConsignmentDoc.DocumentDetails.ConsignmentDocDetails.CDProductDetails.ItemDetails> itemdetails;
         itemdetails = doc.getDocumentDetails().getConsignmentDocDetails().getCDProductDetails().getItemDetails();
 
@@ -87,11 +87,10 @@ public class XMLFileValidator {
         return vpcode;
 
     }
-    
+
     /**
      * check inspection location check producer details check internal product
      * details
      *
      */
- 
 }
