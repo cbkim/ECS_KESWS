@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd">
+<hibernate-reverse-engineering>
+  <schema-selection match-catalog="ECS_KESWS"/>
+  <table-filter match-name="ECS_RES_CD_FILE_MSG"/>
+  <table-filter match-name="REC_ERROR_MSG"/>
+  <table-filter match-name="REC_PAYMENT_MSG"/>
+  <table-filter match-name="USERS"/>
+  <table-filter match-name="TRANSACTION_LOGS"/>
+  <table-filter match-name="RES_CD_FILE_MSG"/>
+  <table-filter match-name="REC_CD_FILE_MSG"/>
+  <table-filter match-name="MESSAGE_TYPES"/>
+  <table-filter match-name="KESWS_INSPECTORS"/>
+  <table-filter match-name="ECS_DOCUMENT_TYPES"/>
+  <table-filter match-name="PRICELIST"/>
+  <table-filter match-name="PRICELIST_INTERNAL_PRODUCTCODE_DOCUMENT_MAP"/>
+  <table-filter match-name="RES_PAYMENT_MSG"/>
+  <table-filter match-name="LOG_TYPES"/>
+  <table-filter match-name="CD_FILE_DETAILS"/>
+  <table-filter match-name="INTERNAL_PRODUCTCODES"/>
+</hibernate-reverse-engineering>
