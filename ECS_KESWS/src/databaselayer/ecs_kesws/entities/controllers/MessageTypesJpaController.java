@@ -12,12 +12,13 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import databaselayer.ecs_kesws.entities.ResCdFileMsg;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import databaselayer.ecs_kesws.entities.RecCdFileMsg;
 import databaselayer.ecs_kesws.entities.controllers.exceptions.IllegalOrphanException;
 import databaselayer.ecs_kesws.entities.controllers.exceptions.NonexistentEntityException;
 import databaselayer.ecs_kesws.entities.controllers.exceptions.PreexistingEntityException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -38,45 +39,45 @@ public class MessageTypesJpaController implements Serializable {
     }
 
     public void create(MessageTypes messageTypes) throws PreexistingEntityException, Exception {
-        if (messageTypes.getResCdFileMsgCollection() == null) {
-            messageTypes.setResCdFileMsgCollection(new ArrayList<ResCdFileMsg>());
+        if (messageTypes.getResCdFileMsgs() == null) {
+            messageTypes.setResCdFileMsgs(new HashSet<ResCdFileMsg>());
         }
-        if (messageTypes.getRecCdFileMsgCollection() == null) {
-            messageTypes.setRecCdFileMsgCollection(new ArrayList<RecCdFileMsg>());
+        if (messageTypes.getRecCdFileMsgs() == null) {
+            messageTypes.setRecCdFileMsgs(new HashSet<RecCdFileMsg>());
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Collection<ResCdFileMsg> attachedResCdFileMsgCollection = new ArrayList<ResCdFileMsg>();
-            for (ResCdFileMsg resCdFileMsgCollectionResCdFileMsgToAttach : messageTypes.getResCdFileMsgCollection()) {
-                resCdFileMsgCollectionResCdFileMsgToAttach = em.getReference(resCdFileMsgCollectionResCdFileMsgToAttach.getClass(), resCdFileMsgCollectionResCdFileMsgToAttach.getResCdFileId());
-                attachedResCdFileMsgCollection.add(resCdFileMsgCollectionResCdFileMsgToAttach);
+            Set<ResCdFileMsg> attachedResCdFileMsgs = new HashSet<ResCdFileMsg>();
+            for (ResCdFileMsg resCdFileMsgsResCdFileMsgToAttach : messageTypes.getResCdFileMsgs()) {
+                resCdFileMsgsResCdFileMsgToAttach = em.getReference(resCdFileMsgsResCdFileMsgToAttach.getClass(), resCdFileMsgsResCdFileMsgToAttach.getResCdFileId());
+                attachedResCdFileMsgs.add(resCdFileMsgsResCdFileMsgToAttach);
             }
-            messageTypes.setResCdFileMsgCollection(attachedResCdFileMsgCollection);
-            Collection<RecCdFileMsg> attachedRecCdFileMsgCollection = new ArrayList<RecCdFileMsg>();
-            for (RecCdFileMsg recCdFileMsgCollectionRecCdFileMsgToAttach : messageTypes.getRecCdFileMsgCollection()) {
-                recCdFileMsgCollectionRecCdFileMsgToAttach = em.getReference(recCdFileMsgCollectionRecCdFileMsgToAttach.getClass(), recCdFileMsgCollectionRecCdFileMsgToAttach.getRECCDFileID());
-                attachedRecCdFileMsgCollection.add(recCdFileMsgCollectionRecCdFileMsgToAttach);
+            messageTypes.setResCdFileMsgs(attachedResCdFileMsgs);
+            Set<RecCdFileMsg> attachedRecCdFileMsgs = new HashSet<RecCdFileMsg>();
+            for (RecCdFileMsg recCdFileMsgsRecCdFileMsgToAttach : messageTypes.getRecCdFileMsgs()) {
+                recCdFileMsgsRecCdFileMsgToAttach = em.getReference(recCdFileMsgsRecCdFileMsgToAttach.getClass(), recCdFileMsgsRecCdFileMsgToAttach.getRecCdFileId());
+                attachedRecCdFileMsgs.add(recCdFileMsgsRecCdFileMsgToAttach);
             }
-            messageTypes.setRecCdFileMsgCollection(attachedRecCdFileMsgCollection);
+            messageTypes.setRecCdFileMsgs(attachedRecCdFileMsgs);
             em.persist(messageTypes);
-            for (ResCdFileMsg resCdFileMsgCollectionResCdFileMsg : messageTypes.getResCdFileMsgCollection()) {
-                MessageTypes oldMessageTypesMessageTypeIdOfResCdFileMsgCollectionResCdFileMsg = resCdFileMsgCollectionResCdFileMsg.getMessageTypesMessageTypeId();
-                resCdFileMsgCollectionResCdFileMsg.setMessageTypesMessageTypeId(messageTypes);
-                resCdFileMsgCollectionResCdFileMsg = em.merge(resCdFileMsgCollectionResCdFileMsg);
-                if (oldMessageTypesMessageTypeIdOfResCdFileMsgCollectionResCdFileMsg != null) {
-                    oldMessageTypesMessageTypeIdOfResCdFileMsgCollectionResCdFileMsg.getResCdFileMsgCollection().remove(resCdFileMsgCollectionResCdFileMsg);
-                    oldMessageTypesMessageTypeIdOfResCdFileMsgCollectionResCdFileMsg = em.merge(oldMessageTypesMessageTypeIdOfResCdFileMsgCollectionResCdFileMsg);
+            for (ResCdFileMsg resCdFileMsgsResCdFileMsg : messageTypes.getResCdFileMsgs()) {
+                MessageTypes oldMessageTypesOfResCdFileMsgsResCdFileMsg = resCdFileMsgsResCdFileMsg.getMessageTypes();
+                resCdFileMsgsResCdFileMsg.setMessageTypes(messageTypes);
+                resCdFileMsgsResCdFileMsg = em.merge(resCdFileMsgsResCdFileMsg);
+                if (oldMessageTypesOfResCdFileMsgsResCdFileMsg != null) {
+                    oldMessageTypesOfResCdFileMsgsResCdFileMsg.getResCdFileMsgs().remove(resCdFileMsgsResCdFileMsg);
+                    oldMessageTypesOfResCdFileMsgsResCdFileMsg = em.merge(oldMessageTypesOfResCdFileMsgsResCdFileMsg);
                 }
             }
-            for (RecCdFileMsg recCdFileMsgCollectionRecCdFileMsg : messageTypes.getRecCdFileMsgCollection()) {
-                MessageTypes oldMessageTypesMessageTypeIdOfRecCdFileMsgCollectionRecCdFileMsg = recCdFileMsgCollectionRecCdFileMsg.getMessageTypesMessageTypeId();
-                recCdFileMsgCollectionRecCdFileMsg.setMessageTypesMessageTypeId(messageTypes);
-                recCdFileMsgCollectionRecCdFileMsg = em.merge(recCdFileMsgCollectionRecCdFileMsg);
-                if (oldMessageTypesMessageTypeIdOfRecCdFileMsgCollectionRecCdFileMsg != null) {
-                    oldMessageTypesMessageTypeIdOfRecCdFileMsgCollectionRecCdFileMsg.getRecCdFileMsgCollection().remove(recCdFileMsgCollectionRecCdFileMsg);
-                    oldMessageTypesMessageTypeIdOfRecCdFileMsgCollectionRecCdFileMsg = em.merge(oldMessageTypesMessageTypeIdOfRecCdFileMsgCollectionRecCdFileMsg);
+            for (RecCdFileMsg recCdFileMsgsRecCdFileMsg : messageTypes.getRecCdFileMsgs()) {
+                MessageTypes oldMessageTypesOfRecCdFileMsgsRecCdFileMsg = recCdFileMsgsRecCdFileMsg.getMessageTypes();
+                recCdFileMsgsRecCdFileMsg.setMessageTypes(messageTypes);
+                recCdFileMsgsRecCdFileMsg = em.merge(recCdFileMsgsRecCdFileMsg);
+                if (oldMessageTypesOfRecCdFileMsgsRecCdFileMsg != null) {
+                    oldMessageTypesOfRecCdFileMsgsRecCdFileMsg.getRecCdFileMsgs().remove(recCdFileMsgsRecCdFileMsg);
+                    oldMessageTypesOfRecCdFileMsgsRecCdFileMsg = em.merge(oldMessageTypesOfRecCdFileMsgsRecCdFileMsg);
                 }
             }
             em.getTransaction().commit();
@@ -98,64 +99,64 @@ public class MessageTypesJpaController implements Serializable {
             em = getEntityManager();
             em.getTransaction().begin();
             MessageTypes persistentMessageTypes = em.find(MessageTypes.class, messageTypes.getMessageTypeId());
-            Collection<ResCdFileMsg> resCdFileMsgCollectionOld = persistentMessageTypes.getResCdFileMsgCollection();
-            Collection<ResCdFileMsg> resCdFileMsgCollectionNew = messageTypes.getResCdFileMsgCollection();
-            Collection<RecCdFileMsg> recCdFileMsgCollectionOld = persistentMessageTypes.getRecCdFileMsgCollection();
-            Collection<RecCdFileMsg> recCdFileMsgCollectionNew = messageTypes.getRecCdFileMsgCollection();
+            Set<ResCdFileMsg> resCdFileMsgsOld = persistentMessageTypes.getResCdFileMsgs();
+            Set<ResCdFileMsg> resCdFileMsgsNew = messageTypes.getResCdFileMsgs();
+            Set<RecCdFileMsg> recCdFileMsgsOld = persistentMessageTypes.getRecCdFileMsgs();
+            Set<RecCdFileMsg> recCdFileMsgsNew = messageTypes.getRecCdFileMsgs();
             List<String> illegalOrphanMessages = null;
-            for (ResCdFileMsg resCdFileMsgCollectionOldResCdFileMsg : resCdFileMsgCollectionOld) {
-                if (!resCdFileMsgCollectionNew.contains(resCdFileMsgCollectionOldResCdFileMsg)) {
+            for (ResCdFileMsg resCdFileMsgsOldResCdFileMsg : resCdFileMsgsOld) {
+                if (!resCdFileMsgsNew.contains(resCdFileMsgsOldResCdFileMsg)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain ResCdFileMsg " + resCdFileMsgCollectionOldResCdFileMsg + " since its messageTypesMessageTypeId field is not nullable.");
+                    illegalOrphanMessages.add("You must retain ResCdFileMsg " + resCdFileMsgsOldResCdFileMsg + " since its messageTypes field is not nullable.");
                 }
             }
-            for (RecCdFileMsg recCdFileMsgCollectionOldRecCdFileMsg : recCdFileMsgCollectionOld) {
-                if (!recCdFileMsgCollectionNew.contains(recCdFileMsgCollectionOldRecCdFileMsg)) {
+            for (RecCdFileMsg recCdFileMsgsOldRecCdFileMsg : recCdFileMsgsOld) {
+                if (!recCdFileMsgsNew.contains(recCdFileMsgsOldRecCdFileMsg)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain RecCdFileMsg " + recCdFileMsgCollectionOldRecCdFileMsg + " since its messageTypesMessageTypeId field is not nullable.");
+                    illegalOrphanMessages.add("You must retain RecCdFileMsg " + recCdFileMsgsOldRecCdFileMsg + " since its messageTypes field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
-            Collection<ResCdFileMsg> attachedResCdFileMsgCollectionNew = new ArrayList<ResCdFileMsg>();
-            for (ResCdFileMsg resCdFileMsgCollectionNewResCdFileMsgToAttach : resCdFileMsgCollectionNew) {
-                resCdFileMsgCollectionNewResCdFileMsgToAttach = em.getReference(resCdFileMsgCollectionNewResCdFileMsgToAttach.getClass(), resCdFileMsgCollectionNewResCdFileMsgToAttach.getResCdFileId());
-                attachedResCdFileMsgCollectionNew.add(resCdFileMsgCollectionNewResCdFileMsgToAttach);
+            Set<ResCdFileMsg> attachedResCdFileMsgsNew = new HashSet<ResCdFileMsg>();
+            for (ResCdFileMsg resCdFileMsgsNewResCdFileMsgToAttach : resCdFileMsgsNew) {
+                resCdFileMsgsNewResCdFileMsgToAttach = em.getReference(resCdFileMsgsNewResCdFileMsgToAttach.getClass(), resCdFileMsgsNewResCdFileMsgToAttach.getResCdFileId());
+                attachedResCdFileMsgsNew.add(resCdFileMsgsNewResCdFileMsgToAttach);
             }
-            resCdFileMsgCollectionNew = attachedResCdFileMsgCollectionNew;
-            messageTypes.setResCdFileMsgCollection(resCdFileMsgCollectionNew);
-            Collection<RecCdFileMsg> attachedRecCdFileMsgCollectionNew = new ArrayList<RecCdFileMsg>();
-            for (RecCdFileMsg recCdFileMsgCollectionNewRecCdFileMsgToAttach : recCdFileMsgCollectionNew) {
-                recCdFileMsgCollectionNewRecCdFileMsgToAttach = em.getReference(recCdFileMsgCollectionNewRecCdFileMsgToAttach.getClass(), recCdFileMsgCollectionNewRecCdFileMsgToAttach.getRECCDFileID());
-                attachedRecCdFileMsgCollectionNew.add(recCdFileMsgCollectionNewRecCdFileMsgToAttach);
+            resCdFileMsgsNew = attachedResCdFileMsgsNew;
+            messageTypes.setResCdFileMsgs(resCdFileMsgsNew);
+            Set<RecCdFileMsg> attachedRecCdFileMsgsNew = new HashSet<RecCdFileMsg>();
+            for (RecCdFileMsg recCdFileMsgsNewRecCdFileMsgToAttach : recCdFileMsgsNew) {
+                recCdFileMsgsNewRecCdFileMsgToAttach = em.getReference(recCdFileMsgsNewRecCdFileMsgToAttach.getClass(), recCdFileMsgsNewRecCdFileMsgToAttach.getRecCdFileId());
+                attachedRecCdFileMsgsNew.add(recCdFileMsgsNewRecCdFileMsgToAttach);
             }
-            recCdFileMsgCollectionNew = attachedRecCdFileMsgCollectionNew;
-            messageTypes.setRecCdFileMsgCollection(recCdFileMsgCollectionNew);
+            recCdFileMsgsNew = attachedRecCdFileMsgsNew;
+            messageTypes.setRecCdFileMsgs(recCdFileMsgsNew);
             messageTypes = em.merge(messageTypes);
-            for (ResCdFileMsg resCdFileMsgCollectionNewResCdFileMsg : resCdFileMsgCollectionNew) {
-                if (!resCdFileMsgCollectionOld.contains(resCdFileMsgCollectionNewResCdFileMsg)) {
-                    MessageTypes oldMessageTypesMessageTypeIdOfResCdFileMsgCollectionNewResCdFileMsg = resCdFileMsgCollectionNewResCdFileMsg.getMessageTypesMessageTypeId();
-                    resCdFileMsgCollectionNewResCdFileMsg.setMessageTypesMessageTypeId(messageTypes);
-                    resCdFileMsgCollectionNewResCdFileMsg = em.merge(resCdFileMsgCollectionNewResCdFileMsg);
-                    if (oldMessageTypesMessageTypeIdOfResCdFileMsgCollectionNewResCdFileMsg != null && !oldMessageTypesMessageTypeIdOfResCdFileMsgCollectionNewResCdFileMsg.equals(messageTypes)) {
-                        oldMessageTypesMessageTypeIdOfResCdFileMsgCollectionNewResCdFileMsg.getResCdFileMsgCollection().remove(resCdFileMsgCollectionNewResCdFileMsg);
-                        oldMessageTypesMessageTypeIdOfResCdFileMsgCollectionNewResCdFileMsg = em.merge(oldMessageTypesMessageTypeIdOfResCdFileMsgCollectionNewResCdFileMsg);
+            for (ResCdFileMsg resCdFileMsgsNewResCdFileMsg : resCdFileMsgsNew) {
+                if (!resCdFileMsgsOld.contains(resCdFileMsgsNewResCdFileMsg)) {
+                    MessageTypes oldMessageTypesOfResCdFileMsgsNewResCdFileMsg = resCdFileMsgsNewResCdFileMsg.getMessageTypes();
+                    resCdFileMsgsNewResCdFileMsg.setMessageTypes(messageTypes);
+                    resCdFileMsgsNewResCdFileMsg = em.merge(resCdFileMsgsNewResCdFileMsg);
+                    if (oldMessageTypesOfResCdFileMsgsNewResCdFileMsg != null && !oldMessageTypesOfResCdFileMsgsNewResCdFileMsg.equals(messageTypes)) {
+                        oldMessageTypesOfResCdFileMsgsNewResCdFileMsg.getResCdFileMsgs().remove(resCdFileMsgsNewResCdFileMsg);
+                        oldMessageTypesOfResCdFileMsgsNewResCdFileMsg = em.merge(oldMessageTypesOfResCdFileMsgsNewResCdFileMsg);
                     }
                 }
             }
-            for (RecCdFileMsg recCdFileMsgCollectionNewRecCdFileMsg : recCdFileMsgCollectionNew) {
-                if (!recCdFileMsgCollectionOld.contains(recCdFileMsgCollectionNewRecCdFileMsg)) {
-                    MessageTypes oldMessageTypesMessageTypeIdOfRecCdFileMsgCollectionNewRecCdFileMsg = recCdFileMsgCollectionNewRecCdFileMsg.getMessageTypesMessageTypeId();
-                    recCdFileMsgCollectionNewRecCdFileMsg.setMessageTypesMessageTypeId(messageTypes);
-                    recCdFileMsgCollectionNewRecCdFileMsg = em.merge(recCdFileMsgCollectionNewRecCdFileMsg);
-                    if (oldMessageTypesMessageTypeIdOfRecCdFileMsgCollectionNewRecCdFileMsg != null && !oldMessageTypesMessageTypeIdOfRecCdFileMsgCollectionNewRecCdFileMsg.equals(messageTypes)) {
-                        oldMessageTypesMessageTypeIdOfRecCdFileMsgCollectionNewRecCdFileMsg.getRecCdFileMsgCollection().remove(recCdFileMsgCollectionNewRecCdFileMsg);
-                        oldMessageTypesMessageTypeIdOfRecCdFileMsgCollectionNewRecCdFileMsg = em.merge(oldMessageTypesMessageTypeIdOfRecCdFileMsgCollectionNewRecCdFileMsg);
+            for (RecCdFileMsg recCdFileMsgsNewRecCdFileMsg : recCdFileMsgsNew) {
+                if (!recCdFileMsgsOld.contains(recCdFileMsgsNewRecCdFileMsg)) {
+                    MessageTypes oldMessageTypesOfRecCdFileMsgsNewRecCdFileMsg = recCdFileMsgsNewRecCdFileMsg.getMessageTypes();
+                    recCdFileMsgsNewRecCdFileMsg.setMessageTypes(messageTypes);
+                    recCdFileMsgsNewRecCdFileMsg = em.merge(recCdFileMsgsNewRecCdFileMsg);
+                    if (oldMessageTypesOfRecCdFileMsgsNewRecCdFileMsg != null && !oldMessageTypesOfRecCdFileMsgsNewRecCdFileMsg.equals(messageTypes)) {
+                        oldMessageTypesOfRecCdFileMsgsNewRecCdFileMsg.getRecCdFileMsgs().remove(recCdFileMsgsNewRecCdFileMsg);
+                        oldMessageTypesOfRecCdFileMsgsNewRecCdFileMsg = em.merge(oldMessageTypesOfRecCdFileMsgsNewRecCdFileMsg);
                     }
                 }
             }
@@ -163,7 +164,7 @@ public class MessageTypesJpaController implements Serializable {
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                Integer id = messageTypes.getMessageTypeId();
+                int id = messageTypes.getMessageTypeId();
                 if (findMessageTypes(id) == null) {
                     throw new NonexistentEntityException("The messageTypes with id " + id + " no longer exists.");
                 }
@@ -176,7 +177,7 @@ public class MessageTypesJpaController implements Serializable {
         }
     }
 
-    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
+    public void destroy(int id) throws IllegalOrphanException, NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -189,19 +190,19 @@ public class MessageTypesJpaController implements Serializable {
                 throw new NonexistentEntityException("The messageTypes with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
-            Collection<ResCdFileMsg> resCdFileMsgCollectionOrphanCheck = messageTypes.getResCdFileMsgCollection();
-            for (ResCdFileMsg resCdFileMsgCollectionOrphanCheckResCdFileMsg : resCdFileMsgCollectionOrphanCheck) {
+            Set<ResCdFileMsg> resCdFileMsgsOrphanCheck = messageTypes.getResCdFileMsgs();
+            for (ResCdFileMsg resCdFileMsgsOrphanCheckResCdFileMsg : resCdFileMsgsOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This MessageTypes (" + messageTypes + ") cannot be destroyed since the ResCdFileMsg " + resCdFileMsgCollectionOrphanCheckResCdFileMsg + " in its resCdFileMsgCollection field has a non-nullable messageTypesMessageTypeId field.");
+                illegalOrphanMessages.add("This MessageTypes (" + messageTypes + ") cannot be destroyed since the ResCdFileMsg " + resCdFileMsgsOrphanCheckResCdFileMsg + " in its resCdFileMsgs field has a non-nullable messageTypes field.");
             }
-            Collection<RecCdFileMsg> recCdFileMsgCollectionOrphanCheck = messageTypes.getRecCdFileMsgCollection();
-            for (RecCdFileMsg recCdFileMsgCollectionOrphanCheckRecCdFileMsg : recCdFileMsgCollectionOrphanCheck) {
+            Set<RecCdFileMsg> recCdFileMsgsOrphanCheck = messageTypes.getRecCdFileMsgs();
+            for (RecCdFileMsg recCdFileMsgsOrphanCheckRecCdFileMsg : recCdFileMsgsOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This MessageTypes (" + messageTypes + ") cannot be destroyed since the RecCdFileMsg " + recCdFileMsgCollectionOrphanCheckRecCdFileMsg + " in its recCdFileMsgCollection field has a non-nullable messageTypesMessageTypeId field.");
+                illegalOrphanMessages.add("This MessageTypes (" + messageTypes + ") cannot be destroyed since the RecCdFileMsg " + recCdFileMsgsOrphanCheckRecCdFileMsg + " in its recCdFileMsgs field has a non-nullable messageTypes field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
@@ -239,7 +240,7 @@ public class MessageTypesJpaController implements Serializable {
         }
     }
 
-    public MessageTypes findMessageTypes(Integer id) {
+    public MessageTypes findMessageTypes(int id) {
         EntityManager em = getEntityManager();
         try {
             return em.find(MessageTypes.class, id);

@@ -14,8 +14,9 @@ import javax.persistence.criteria.Root;
 import databaselayer.ecs_kesws.entities.RecErrorMsg;
 import databaselayer.ecs_kesws.entities.controllers.exceptions.IllegalOrphanException;
 import databaselayer.ecs_kesws.entities.controllers.exceptions.NonexistentEntityException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -36,27 +37,27 @@ public class EcsResCdFileMsgJpaController implements Serializable {
     }
 
     public void create(EcsResCdFileMsg ecsResCdFileMsg) {
-        if (ecsResCdFileMsg.getRecErrorMsgCollection() == null) {
-            ecsResCdFileMsg.setRecErrorMsgCollection(new ArrayList<RecErrorMsg>());
+        if (ecsResCdFileMsg.getRecErrorMsgs() == null) {
+            ecsResCdFileMsg.setRecErrorMsgs(new HashSet<RecErrorMsg>());
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Collection<RecErrorMsg> attachedRecErrorMsgCollection = new ArrayList<RecErrorMsg>();
-            for (RecErrorMsg recErrorMsgCollectionRecErrorMsgToAttach : ecsResCdFileMsg.getRecErrorMsgCollection()) {
-                recErrorMsgCollectionRecErrorMsgToAttach = em.getReference(recErrorMsgCollectionRecErrorMsgToAttach.getClass(), recErrorMsgCollectionRecErrorMsgToAttach.getRecErrorMsgId());
-                attachedRecErrorMsgCollection.add(recErrorMsgCollectionRecErrorMsgToAttach);
+            Set<RecErrorMsg> attachedRecErrorMsgs = new HashSet<RecErrorMsg>();
+            for (RecErrorMsg recErrorMsgsRecErrorMsgToAttach : ecsResCdFileMsg.getRecErrorMsgs()) {
+                recErrorMsgsRecErrorMsgToAttach = em.getReference(recErrorMsgsRecErrorMsgToAttach.getClass(), recErrorMsgsRecErrorMsgToAttach.getRecErrorMsgId());
+                attachedRecErrorMsgs.add(recErrorMsgsRecErrorMsgToAttach);
             }
-            ecsResCdFileMsg.setRecErrorMsgCollection(attachedRecErrorMsgCollection);
+            ecsResCdFileMsg.setRecErrorMsgs(attachedRecErrorMsgs);
             em.persist(ecsResCdFileMsg);
-            for (RecErrorMsg recErrorMsgCollectionRecErrorMsg : ecsResCdFileMsg.getRecErrorMsgCollection()) {
-                EcsResCdFileMsg oldEcsResCdFileMsgEcsResCdFileMsgIdOfRecErrorMsgCollectionRecErrorMsg = recErrorMsgCollectionRecErrorMsg.getEcsResCdFileMsgEcsResCdFileMsgId();
-                recErrorMsgCollectionRecErrorMsg.setEcsResCdFileMsgEcsResCdFileMsgId(ecsResCdFileMsg);
-                recErrorMsgCollectionRecErrorMsg = em.merge(recErrorMsgCollectionRecErrorMsg);
-                if (oldEcsResCdFileMsgEcsResCdFileMsgIdOfRecErrorMsgCollectionRecErrorMsg != null) {
-                    oldEcsResCdFileMsgEcsResCdFileMsgIdOfRecErrorMsgCollectionRecErrorMsg.getRecErrorMsgCollection().remove(recErrorMsgCollectionRecErrorMsg);
-                    oldEcsResCdFileMsgEcsResCdFileMsgIdOfRecErrorMsgCollectionRecErrorMsg = em.merge(oldEcsResCdFileMsgEcsResCdFileMsgIdOfRecErrorMsgCollectionRecErrorMsg);
+            for (RecErrorMsg recErrorMsgsRecErrorMsg : ecsResCdFileMsg.getRecErrorMsgs()) {
+                EcsResCdFileMsg oldEcsResCdFileMsgOfRecErrorMsgsRecErrorMsg = recErrorMsgsRecErrorMsg.getEcsResCdFileMsg();
+                recErrorMsgsRecErrorMsg.setEcsResCdFileMsg(ecsResCdFileMsg);
+                recErrorMsgsRecErrorMsg = em.merge(recErrorMsgsRecErrorMsg);
+                if (oldEcsResCdFileMsgOfRecErrorMsgsRecErrorMsg != null) {
+                    oldEcsResCdFileMsgOfRecErrorMsgsRecErrorMsg.getRecErrorMsgs().remove(recErrorMsgsRecErrorMsg);
+                    oldEcsResCdFileMsgOfRecErrorMsgsRecErrorMsg = em.merge(oldEcsResCdFileMsgOfRecErrorMsgsRecErrorMsg);
                 }
             }
             em.getTransaction().commit();
@@ -73,36 +74,36 @@ public class EcsResCdFileMsgJpaController implements Serializable {
             em = getEntityManager();
             em.getTransaction().begin();
             EcsResCdFileMsg persistentEcsResCdFileMsg = em.find(EcsResCdFileMsg.class, ecsResCdFileMsg.getEcsResCdFileMsgId());
-            Collection<RecErrorMsg> recErrorMsgCollectionOld = persistentEcsResCdFileMsg.getRecErrorMsgCollection();
-            Collection<RecErrorMsg> recErrorMsgCollectionNew = ecsResCdFileMsg.getRecErrorMsgCollection();
+            Set<RecErrorMsg> recErrorMsgsOld = persistentEcsResCdFileMsg.getRecErrorMsgs();
+            Set<RecErrorMsg> recErrorMsgsNew = ecsResCdFileMsg.getRecErrorMsgs();
             List<String> illegalOrphanMessages = null;
-            for (RecErrorMsg recErrorMsgCollectionOldRecErrorMsg : recErrorMsgCollectionOld) {
-                if (!recErrorMsgCollectionNew.contains(recErrorMsgCollectionOldRecErrorMsg)) {
+            for (RecErrorMsg recErrorMsgsOldRecErrorMsg : recErrorMsgsOld) {
+                if (!recErrorMsgsNew.contains(recErrorMsgsOldRecErrorMsg)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain RecErrorMsg " + recErrorMsgCollectionOldRecErrorMsg + " since its ecsResCdFileMsgEcsResCdFileMsgId field is not nullable.");
+                    illegalOrphanMessages.add("You must retain RecErrorMsg " + recErrorMsgsOldRecErrorMsg + " since its ecsResCdFileMsg field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
-            Collection<RecErrorMsg> attachedRecErrorMsgCollectionNew = new ArrayList<RecErrorMsg>();
-            for (RecErrorMsg recErrorMsgCollectionNewRecErrorMsgToAttach : recErrorMsgCollectionNew) {
-                recErrorMsgCollectionNewRecErrorMsgToAttach = em.getReference(recErrorMsgCollectionNewRecErrorMsgToAttach.getClass(), recErrorMsgCollectionNewRecErrorMsgToAttach.getRecErrorMsgId());
-                attachedRecErrorMsgCollectionNew.add(recErrorMsgCollectionNewRecErrorMsgToAttach);
+            Set<RecErrorMsg> attachedRecErrorMsgsNew = new HashSet<RecErrorMsg>();
+            for (RecErrorMsg recErrorMsgsNewRecErrorMsgToAttach : recErrorMsgsNew) {
+                recErrorMsgsNewRecErrorMsgToAttach = em.getReference(recErrorMsgsNewRecErrorMsgToAttach.getClass(), recErrorMsgsNewRecErrorMsgToAttach.getRecErrorMsgId());
+                attachedRecErrorMsgsNew.add(recErrorMsgsNewRecErrorMsgToAttach);
             }
-            recErrorMsgCollectionNew = attachedRecErrorMsgCollectionNew;
-            ecsResCdFileMsg.setRecErrorMsgCollection(recErrorMsgCollectionNew);
+            recErrorMsgsNew = attachedRecErrorMsgsNew;
+            ecsResCdFileMsg.setRecErrorMsgs(recErrorMsgsNew);
             ecsResCdFileMsg = em.merge(ecsResCdFileMsg);
-            for (RecErrorMsg recErrorMsgCollectionNewRecErrorMsg : recErrorMsgCollectionNew) {
-                if (!recErrorMsgCollectionOld.contains(recErrorMsgCollectionNewRecErrorMsg)) {
-                    EcsResCdFileMsg oldEcsResCdFileMsgEcsResCdFileMsgIdOfRecErrorMsgCollectionNewRecErrorMsg = recErrorMsgCollectionNewRecErrorMsg.getEcsResCdFileMsgEcsResCdFileMsgId();
-                    recErrorMsgCollectionNewRecErrorMsg.setEcsResCdFileMsgEcsResCdFileMsgId(ecsResCdFileMsg);
-                    recErrorMsgCollectionNewRecErrorMsg = em.merge(recErrorMsgCollectionNewRecErrorMsg);
-                    if (oldEcsResCdFileMsgEcsResCdFileMsgIdOfRecErrorMsgCollectionNewRecErrorMsg != null && !oldEcsResCdFileMsgEcsResCdFileMsgIdOfRecErrorMsgCollectionNewRecErrorMsg.equals(ecsResCdFileMsg)) {
-                        oldEcsResCdFileMsgEcsResCdFileMsgIdOfRecErrorMsgCollectionNewRecErrorMsg.getRecErrorMsgCollection().remove(recErrorMsgCollectionNewRecErrorMsg);
-                        oldEcsResCdFileMsgEcsResCdFileMsgIdOfRecErrorMsgCollectionNewRecErrorMsg = em.merge(oldEcsResCdFileMsgEcsResCdFileMsgIdOfRecErrorMsgCollectionNewRecErrorMsg);
+            for (RecErrorMsg recErrorMsgsNewRecErrorMsg : recErrorMsgsNew) {
+                if (!recErrorMsgsOld.contains(recErrorMsgsNewRecErrorMsg)) {
+                    EcsResCdFileMsg oldEcsResCdFileMsgOfRecErrorMsgsNewRecErrorMsg = recErrorMsgsNewRecErrorMsg.getEcsResCdFileMsg();
+                    recErrorMsgsNewRecErrorMsg.setEcsResCdFileMsg(ecsResCdFileMsg);
+                    recErrorMsgsNewRecErrorMsg = em.merge(recErrorMsgsNewRecErrorMsg);
+                    if (oldEcsResCdFileMsgOfRecErrorMsgsNewRecErrorMsg != null && !oldEcsResCdFileMsgOfRecErrorMsgsNewRecErrorMsg.equals(ecsResCdFileMsg)) {
+                        oldEcsResCdFileMsgOfRecErrorMsgsNewRecErrorMsg.getRecErrorMsgs().remove(recErrorMsgsNewRecErrorMsg);
+                        oldEcsResCdFileMsgOfRecErrorMsgsNewRecErrorMsg = em.merge(oldEcsResCdFileMsgOfRecErrorMsgsNewRecErrorMsg);
                     }
                 }
             }
@@ -136,12 +137,12 @@ public class EcsResCdFileMsgJpaController implements Serializable {
                 throw new NonexistentEntityException("The ecsResCdFileMsg with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
-            Collection<RecErrorMsg> recErrorMsgCollectionOrphanCheck = ecsResCdFileMsg.getRecErrorMsgCollection();
-            for (RecErrorMsg recErrorMsgCollectionOrphanCheckRecErrorMsg : recErrorMsgCollectionOrphanCheck) {
+            Set<RecErrorMsg> recErrorMsgsOrphanCheck = ecsResCdFileMsg.getRecErrorMsgs();
+            for (RecErrorMsg recErrorMsgsOrphanCheckRecErrorMsg : recErrorMsgsOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This EcsResCdFileMsg (" + ecsResCdFileMsg + ") cannot be destroyed since the RecErrorMsg " + recErrorMsgCollectionOrphanCheckRecErrorMsg + " in its recErrorMsgCollection field has a non-nullable ecsResCdFileMsgEcsResCdFileMsgId field.");
+                illegalOrphanMessages.add("This EcsResCdFileMsg (" + ecsResCdFileMsg + ") cannot be destroyed since the RecErrorMsg " + recErrorMsgsOrphanCheckRecErrorMsg + " in its recErrorMsgs field has a non-nullable ecsResCdFileMsg field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);

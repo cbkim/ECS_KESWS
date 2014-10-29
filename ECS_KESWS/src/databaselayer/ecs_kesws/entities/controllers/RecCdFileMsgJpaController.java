@@ -11,15 +11,16 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import databaselayer.ecs_kesws.entities.MessageTypes;
-import databaselayer.ecs_kesws.entities.ResCdFileMsg;
-import java.util.ArrayList;
-import java.util.Collection;
 import databaselayer.ecs_kesws.entities.ResPaymentMsg;
-import databaselayer.ecs_kesws.entities.TransactionLogs;
+import java.util.HashSet;
+import java.util.Set;
 import databaselayer.ecs_kesws.entities.CdFileDetails;
 import databaselayer.ecs_kesws.entities.RecCdFileMsg;
+import databaselayer.ecs_kesws.entities.TransactionLogs;
+import databaselayer.ecs_kesws.entities.ResCdFileMsg;
 import databaselayer.ecs_kesws.entities.controllers.exceptions.IllegalOrphanException;
 import databaselayer.ecs_kesws.entities.controllers.exceptions.NonexistentEntityException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -40,90 +41,90 @@ public class RecCdFileMsgJpaController implements Serializable {
     }
 
     public void create(RecCdFileMsg recCdFileMsg) {
-        if (recCdFileMsg.getResCdFileMsgCollection() == null) {
-            recCdFileMsg.setResCdFileMsgCollection(new ArrayList<ResCdFileMsg>());
+        if (recCdFileMsg.getResPaymentMsgs() == null) {
+            recCdFileMsg.setResPaymentMsgs(new HashSet<ResPaymentMsg>());
         }
-        if (recCdFileMsg.getResPaymentMsgCollection() == null) {
-            recCdFileMsg.setResPaymentMsgCollection(new ArrayList<ResPaymentMsg>());
+        if (recCdFileMsg.getCdFileDetailses() == null) {
+            recCdFileMsg.setCdFileDetailses(new HashSet<CdFileDetails>());
         }
-        if (recCdFileMsg.getTransactionLogsCollection() == null) {
-            recCdFileMsg.setTransactionLogsCollection(new ArrayList<TransactionLogs>());
+        if (recCdFileMsg.getTransactionLogses() == null) {
+            recCdFileMsg.setTransactionLogses(new HashSet<TransactionLogs>());
         }
-        if (recCdFileMsg.getCdFileDetailsCollection() == null) {
-            recCdFileMsg.setCdFileDetailsCollection(new ArrayList<CdFileDetails>());
+        if (recCdFileMsg.getResCdFileMsgs() == null) {
+            recCdFileMsg.setResCdFileMsgs(new HashSet<ResCdFileMsg>());
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            MessageTypes messageTypesMessageTypeId = recCdFileMsg.getMessageTypesMessageTypeId();
-            if (messageTypesMessageTypeId != null) {
-                messageTypesMessageTypeId = em.getReference(messageTypesMessageTypeId.getClass(), messageTypesMessageTypeId.getMessageTypeId());
-                recCdFileMsg.setMessageTypesMessageTypeId(messageTypesMessageTypeId);
+            MessageTypes messageTypes = recCdFileMsg.getMessageTypes();
+            if (messageTypes != null) {
+                messageTypes = em.getReference(messageTypes.getClass(), messageTypes.getMessageTypeId());
+                recCdFileMsg.setMessageTypes(messageTypes);
             }
-            Collection<ResCdFileMsg> attachedResCdFileMsgCollection = new ArrayList<ResCdFileMsg>();
-            for (ResCdFileMsg resCdFileMsgCollectionResCdFileMsgToAttach : recCdFileMsg.getResCdFileMsgCollection()) {
-                resCdFileMsgCollectionResCdFileMsgToAttach = em.getReference(resCdFileMsgCollectionResCdFileMsgToAttach.getClass(), resCdFileMsgCollectionResCdFileMsgToAttach.getResCdFileId());
-                attachedResCdFileMsgCollection.add(resCdFileMsgCollectionResCdFileMsgToAttach);
+            Set<ResPaymentMsg> attachedResPaymentMsgs = new HashSet<ResPaymentMsg>();
+            for (ResPaymentMsg resPaymentMsgsResPaymentMsgToAttach : recCdFileMsg.getResPaymentMsgs()) {
+                resPaymentMsgsResPaymentMsgToAttach = em.getReference(resPaymentMsgsResPaymentMsgToAttach.getClass(), resPaymentMsgsResPaymentMsgToAttach.getPayementMsgId());
+                attachedResPaymentMsgs.add(resPaymentMsgsResPaymentMsgToAttach);
             }
-            recCdFileMsg.setResCdFileMsgCollection(attachedResCdFileMsgCollection);
-            Collection<ResPaymentMsg> attachedResPaymentMsgCollection = new ArrayList<ResPaymentMsg>();
-            for (ResPaymentMsg resPaymentMsgCollectionResPaymentMsgToAttach : recCdFileMsg.getResPaymentMsgCollection()) {
-                resPaymentMsgCollectionResPaymentMsgToAttach = em.getReference(resPaymentMsgCollectionResPaymentMsgToAttach.getClass(), resPaymentMsgCollectionResPaymentMsgToAttach.getPayementMsgId());
-                attachedResPaymentMsgCollection.add(resPaymentMsgCollectionResPaymentMsgToAttach);
+            recCdFileMsg.setResPaymentMsgs(attachedResPaymentMsgs);
+            Set<CdFileDetails> attachedCdFileDetailses = new HashSet<CdFileDetails>();
+            for (CdFileDetails cdFileDetailsesCdFileDetailsToAttach : recCdFileMsg.getCdFileDetailses()) {
+                cdFileDetailsesCdFileDetailsToAttach = em.getReference(cdFileDetailsesCdFileDetailsToAttach.getClass(), cdFileDetailsesCdFileDetailsToAttach.getId());
+                attachedCdFileDetailses.add(cdFileDetailsesCdFileDetailsToAttach);
             }
-            recCdFileMsg.setResPaymentMsgCollection(attachedResPaymentMsgCollection);
-            Collection<TransactionLogs> attachedTransactionLogsCollection = new ArrayList<TransactionLogs>();
-            for (TransactionLogs transactionLogsCollectionTransactionLogsToAttach : recCdFileMsg.getTransactionLogsCollection()) {
-                transactionLogsCollectionTransactionLogsToAttach = em.getReference(transactionLogsCollectionTransactionLogsToAttach.getClass(), transactionLogsCollectionTransactionLogsToAttach.getLogID());
-                attachedTransactionLogsCollection.add(transactionLogsCollectionTransactionLogsToAttach);
+            recCdFileMsg.setCdFileDetailses(attachedCdFileDetailses);
+            Set<TransactionLogs> attachedTransactionLogses = new HashSet<TransactionLogs>();
+            for (TransactionLogs transactionLogsesTransactionLogsToAttach : recCdFileMsg.getTransactionLogses()) {
+                transactionLogsesTransactionLogsToAttach = em.getReference(transactionLogsesTransactionLogsToAttach.getClass(), transactionLogsesTransactionLogsToAttach.getLogId());
+                attachedTransactionLogses.add(transactionLogsesTransactionLogsToAttach);
             }
-            recCdFileMsg.setTransactionLogsCollection(attachedTransactionLogsCollection);
-            Collection<CdFileDetails> attachedCdFileDetailsCollection = new ArrayList<CdFileDetails>();
-            for (CdFileDetails cdFileDetailsCollectionCdFileDetailsToAttach : recCdFileMsg.getCdFileDetailsCollection()) {
-                cdFileDetailsCollectionCdFileDetailsToAttach = em.getReference(cdFileDetailsCollectionCdFileDetailsToAttach.getClass(), cdFileDetailsCollectionCdFileDetailsToAttach.getId());
-                attachedCdFileDetailsCollection.add(cdFileDetailsCollectionCdFileDetailsToAttach);
+            recCdFileMsg.setTransactionLogses(attachedTransactionLogses);
+            Set<ResCdFileMsg> attachedResCdFileMsgs = new HashSet<ResCdFileMsg>();
+            for (ResCdFileMsg resCdFileMsgsResCdFileMsgToAttach : recCdFileMsg.getResCdFileMsgs()) {
+                resCdFileMsgsResCdFileMsgToAttach = em.getReference(resCdFileMsgsResCdFileMsgToAttach.getClass(), resCdFileMsgsResCdFileMsgToAttach.getResCdFileId());
+                attachedResCdFileMsgs.add(resCdFileMsgsResCdFileMsgToAttach);
             }
-            recCdFileMsg.setCdFileDetailsCollection(attachedCdFileDetailsCollection);
+            recCdFileMsg.setResCdFileMsgs(attachedResCdFileMsgs);
             em.persist(recCdFileMsg);
-            if (messageTypesMessageTypeId != null) {
-                messageTypesMessageTypeId.getRecCdFileMsgCollection().add(recCdFileMsg);
-                messageTypesMessageTypeId = em.merge(messageTypesMessageTypeId);
+            if (messageTypes != null) {
+                messageTypes.getRecCdFileMsgs().add(recCdFileMsg);
+                messageTypes = em.merge(messageTypes);
             }
-            for (ResCdFileMsg resCdFileMsgCollectionResCdFileMsg : recCdFileMsg.getResCdFileMsgCollection()) {
-                RecCdFileMsg oldRecCdFileMsgRecCdFileIdOfResCdFileMsgCollectionResCdFileMsg = resCdFileMsgCollectionResCdFileMsg.getRecCdFileMsgRecCdFileId();
-                resCdFileMsgCollectionResCdFileMsg.setRecCdFileMsgRecCdFileId(recCdFileMsg);
-                resCdFileMsgCollectionResCdFileMsg = em.merge(resCdFileMsgCollectionResCdFileMsg);
-                if (oldRecCdFileMsgRecCdFileIdOfResCdFileMsgCollectionResCdFileMsg != null) {
-                    oldRecCdFileMsgRecCdFileIdOfResCdFileMsgCollectionResCdFileMsg.getResCdFileMsgCollection().remove(resCdFileMsgCollectionResCdFileMsg);
-                    oldRecCdFileMsgRecCdFileIdOfResCdFileMsgCollectionResCdFileMsg = em.merge(oldRecCdFileMsgRecCdFileIdOfResCdFileMsgCollectionResCdFileMsg);
+            for (ResPaymentMsg resPaymentMsgsResPaymentMsg : recCdFileMsg.getResPaymentMsgs()) {
+                RecCdFileMsg oldRecCdFileMsgOfResPaymentMsgsResPaymentMsg = resPaymentMsgsResPaymentMsg.getRecCdFileMsg();
+                resPaymentMsgsResPaymentMsg.setRecCdFileMsg(recCdFileMsg);
+                resPaymentMsgsResPaymentMsg = em.merge(resPaymentMsgsResPaymentMsg);
+                if (oldRecCdFileMsgOfResPaymentMsgsResPaymentMsg != null) {
+                    oldRecCdFileMsgOfResPaymentMsgsResPaymentMsg.getResPaymentMsgs().remove(resPaymentMsgsResPaymentMsg);
+                    oldRecCdFileMsgOfResPaymentMsgsResPaymentMsg = em.merge(oldRecCdFileMsgOfResPaymentMsgsResPaymentMsg);
                 }
             }
-            for (ResPaymentMsg resPaymentMsgCollectionResPaymentMsg : recCdFileMsg.getResPaymentMsgCollection()) {
-                RecCdFileMsg oldINBOXMSGInboxIDOfResPaymentMsgCollectionResPaymentMsg = resPaymentMsgCollectionResPaymentMsg.getINBOXMSGInboxID();
-                resPaymentMsgCollectionResPaymentMsg.setINBOXMSGInboxID(recCdFileMsg);
-                resPaymentMsgCollectionResPaymentMsg = em.merge(resPaymentMsgCollectionResPaymentMsg);
-                if (oldINBOXMSGInboxIDOfResPaymentMsgCollectionResPaymentMsg != null) {
-                    oldINBOXMSGInboxIDOfResPaymentMsgCollectionResPaymentMsg.getResPaymentMsgCollection().remove(resPaymentMsgCollectionResPaymentMsg);
-                    oldINBOXMSGInboxIDOfResPaymentMsgCollectionResPaymentMsg = em.merge(oldINBOXMSGInboxIDOfResPaymentMsgCollectionResPaymentMsg);
+            for (CdFileDetails cdFileDetailsesCdFileDetails : recCdFileMsg.getCdFileDetailses()) {
+                RecCdFileMsg oldRecCdFileMsgOfCdFileDetailsesCdFileDetails = cdFileDetailsesCdFileDetails.getRecCdFileMsg();
+                cdFileDetailsesCdFileDetails.setRecCdFileMsg(recCdFileMsg);
+                cdFileDetailsesCdFileDetails = em.merge(cdFileDetailsesCdFileDetails);
+                if (oldRecCdFileMsgOfCdFileDetailsesCdFileDetails != null) {
+                    oldRecCdFileMsgOfCdFileDetailsesCdFileDetails.getCdFileDetailses().remove(cdFileDetailsesCdFileDetails);
+                    oldRecCdFileMsgOfCdFileDetailsesCdFileDetails = em.merge(oldRecCdFileMsgOfCdFileDetailsesCdFileDetails);
                 }
             }
-            for (TransactionLogs transactionLogsCollectionTransactionLogs : recCdFileMsg.getTransactionLogsCollection()) {
-                RecCdFileMsg oldRecCdFileMsgRecCdFileIdOfTransactionLogsCollectionTransactionLogs = transactionLogsCollectionTransactionLogs.getRecCdFileMsgRecCdFileId();
-                transactionLogsCollectionTransactionLogs.setRecCdFileMsgRecCdFileId(recCdFileMsg);
-                transactionLogsCollectionTransactionLogs = em.merge(transactionLogsCollectionTransactionLogs);
-                if (oldRecCdFileMsgRecCdFileIdOfTransactionLogsCollectionTransactionLogs != null) {
-                    oldRecCdFileMsgRecCdFileIdOfTransactionLogsCollectionTransactionLogs.getTransactionLogsCollection().remove(transactionLogsCollectionTransactionLogs);
-                    oldRecCdFileMsgRecCdFileIdOfTransactionLogsCollectionTransactionLogs = em.merge(oldRecCdFileMsgRecCdFileIdOfTransactionLogsCollectionTransactionLogs);
+            for (TransactionLogs transactionLogsesTransactionLogs : recCdFileMsg.getTransactionLogses()) {
+                RecCdFileMsg oldRecCdFileMsgOfTransactionLogsesTransactionLogs = transactionLogsesTransactionLogs.getRecCdFileMsg();
+                transactionLogsesTransactionLogs.setRecCdFileMsg(recCdFileMsg);
+                transactionLogsesTransactionLogs = em.merge(transactionLogsesTransactionLogs);
+                if (oldRecCdFileMsgOfTransactionLogsesTransactionLogs != null) {
+                    oldRecCdFileMsgOfTransactionLogsesTransactionLogs.getTransactionLogses().remove(transactionLogsesTransactionLogs);
+                    oldRecCdFileMsgOfTransactionLogsesTransactionLogs = em.merge(oldRecCdFileMsgOfTransactionLogsesTransactionLogs);
                 }
             }
-            for (CdFileDetails cdFileDetailsCollectionCdFileDetails : recCdFileMsg.getCdFileDetailsCollection()) {
-                RecCdFileMsg oldRECCDFILEMSGRECCDFILEIDRefOfCdFileDetailsCollectionCdFileDetails = cdFileDetailsCollectionCdFileDetails.getRECCDFILEMSGRECCDFILEIDRef();
-                cdFileDetailsCollectionCdFileDetails.setRECCDFILEMSGRECCDFILEIDRef(recCdFileMsg);
-                cdFileDetailsCollectionCdFileDetails = em.merge(cdFileDetailsCollectionCdFileDetails);
-                if (oldRECCDFILEMSGRECCDFILEIDRefOfCdFileDetailsCollectionCdFileDetails != null) {
-                    oldRECCDFILEMSGRECCDFILEIDRefOfCdFileDetailsCollectionCdFileDetails.getCdFileDetailsCollection().remove(cdFileDetailsCollectionCdFileDetails);
-                    oldRECCDFILEMSGRECCDFILEIDRefOfCdFileDetailsCollectionCdFileDetails = em.merge(oldRECCDFILEMSGRECCDFILEIDRefOfCdFileDetailsCollectionCdFileDetails);
+            for (ResCdFileMsg resCdFileMsgsResCdFileMsg : recCdFileMsg.getResCdFileMsgs()) {
+                RecCdFileMsg oldRecCdFileMsgOfResCdFileMsgsResCdFileMsg = resCdFileMsgsResCdFileMsg.getRecCdFileMsg();
+                resCdFileMsgsResCdFileMsg.setRecCdFileMsg(recCdFileMsg);
+                resCdFileMsgsResCdFileMsg = em.merge(resCdFileMsgsResCdFileMsg);
+                if (oldRecCdFileMsgOfResCdFileMsgsResCdFileMsg != null) {
+                    oldRecCdFileMsgOfResCdFileMsgsResCdFileMsg.getResCdFileMsgs().remove(resCdFileMsgsResCdFileMsg);
+                    oldRecCdFileMsgOfResCdFileMsgsResCdFileMsg = em.merge(oldRecCdFileMsgOfResCdFileMsgsResCdFileMsg);
                 }
             }
             em.getTransaction().commit();
@@ -139,133 +140,133 @@ public class RecCdFileMsgJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            RecCdFileMsg persistentRecCdFileMsg = em.find(RecCdFileMsg.class, recCdFileMsg.getRECCDFileID());
-            MessageTypes messageTypesMessageTypeIdOld = persistentRecCdFileMsg.getMessageTypesMessageTypeId();
-            MessageTypes messageTypesMessageTypeIdNew = recCdFileMsg.getMessageTypesMessageTypeId();
-            Collection<ResCdFileMsg> resCdFileMsgCollectionOld = persistentRecCdFileMsg.getResCdFileMsgCollection();
-            Collection<ResCdFileMsg> resCdFileMsgCollectionNew = recCdFileMsg.getResCdFileMsgCollection();
-            Collection<ResPaymentMsg> resPaymentMsgCollectionOld = persistentRecCdFileMsg.getResPaymentMsgCollection();
-            Collection<ResPaymentMsg> resPaymentMsgCollectionNew = recCdFileMsg.getResPaymentMsgCollection();
-            Collection<TransactionLogs> transactionLogsCollectionOld = persistentRecCdFileMsg.getTransactionLogsCollection();
-            Collection<TransactionLogs> transactionLogsCollectionNew = recCdFileMsg.getTransactionLogsCollection();
-            Collection<CdFileDetails> cdFileDetailsCollectionOld = persistentRecCdFileMsg.getCdFileDetailsCollection();
-            Collection<CdFileDetails> cdFileDetailsCollectionNew = recCdFileMsg.getCdFileDetailsCollection();
+            RecCdFileMsg persistentRecCdFileMsg = em.find(RecCdFileMsg.class, recCdFileMsg.getRecCdFileId());
+            MessageTypes messageTypesOld = persistentRecCdFileMsg.getMessageTypes();
+            MessageTypes messageTypesNew = recCdFileMsg.getMessageTypes();
+            Set<ResPaymentMsg> resPaymentMsgsOld = persistentRecCdFileMsg.getResPaymentMsgs();
+            Set<ResPaymentMsg> resPaymentMsgsNew = recCdFileMsg.getResPaymentMsgs();
+            Set<CdFileDetails> cdFileDetailsesOld = persistentRecCdFileMsg.getCdFileDetailses();
+            Set<CdFileDetails> cdFileDetailsesNew = recCdFileMsg.getCdFileDetailses();
+            Set<TransactionLogs> transactionLogsesOld = persistentRecCdFileMsg.getTransactionLogses();
+            Set<TransactionLogs> transactionLogsesNew = recCdFileMsg.getTransactionLogses();
+            Set<ResCdFileMsg> resCdFileMsgsOld = persistentRecCdFileMsg.getResCdFileMsgs();
+            Set<ResCdFileMsg> resCdFileMsgsNew = recCdFileMsg.getResCdFileMsgs();
             List<String> illegalOrphanMessages = null;
-            for (ResCdFileMsg resCdFileMsgCollectionOldResCdFileMsg : resCdFileMsgCollectionOld) {
-                if (!resCdFileMsgCollectionNew.contains(resCdFileMsgCollectionOldResCdFileMsg)) {
+            for (ResPaymentMsg resPaymentMsgsOldResPaymentMsg : resPaymentMsgsOld) {
+                if (!resPaymentMsgsNew.contains(resPaymentMsgsOldResPaymentMsg)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain ResCdFileMsg " + resCdFileMsgCollectionOldResCdFileMsg + " since its recCdFileMsgRecCdFileId field is not nullable.");
+                    illegalOrphanMessages.add("You must retain ResPaymentMsg " + resPaymentMsgsOldResPaymentMsg + " since its recCdFileMsg field is not nullable.");
                 }
             }
-            for (ResPaymentMsg resPaymentMsgCollectionOldResPaymentMsg : resPaymentMsgCollectionOld) {
-                if (!resPaymentMsgCollectionNew.contains(resPaymentMsgCollectionOldResPaymentMsg)) {
+            for (CdFileDetails cdFileDetailsesOldCdFileDetails : cdFileDetailsesOld) {
+                if (!cdFileDetailsesNew.contains(cdFileDetailsesOldCdFileDetails)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain ResPaymentMsg " + resPaymentMsgCollectionOldResPaymentMsg + " since its INBOXMSGInboxID field is not nullable.");
+                    illegalOrphanMessages.add("You must retain CdFileDetails " + cdFileDetailsesOldCdFileDetails + " since its recCdFileMsg field is not nullable.");
                 }
             }
-            for (CdFileDetails cdFileDetailsCollectionOldCdFileDetails : cdFileDetailsCollectionOld) {
-                if (!cdFileDetailsCollectionNew.contains(cdFileDetailsCollectionOldCdFileDetails)) {
+            for (ResCdFileMsg resCdFileMsgsOldResCdFileMsg : resCdFileMsgsOld) {
+                if (!resCdFileMsgsNew.contains(resCdFileMsgsOldResCdFileMsg)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain CdFileDetails " + cdFileDetailsCollectionOldCdFileDetails + " since its RECCDFILEMSGRECCDFILEIDRef field is not nullable.");
+                    illegalOrphanMessages.add("You must retain ResCdFileMsg " + resCdFileMsgsOldResCdFileMsg + " since its recCdFileMsg field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
-            if (messageTypesMessageTypeIdNew != null) {
-                messageTypesMessageTypeIdNew = em.getReference(messageTypesMessageTypeIdNew.getClass(), messageTypesMessageTypeIdNew.getMessageTypeId());
-                recCdFileMsg.setMessageTypesMessageTypeId(messageTypesMessageTypeIdNew);
+            if (messageTypesNew != null) {
+                messageTypesNew = em.getReference(messageTypesNew.getClass(), messageTypesNew.getMessageTypeId());
+                recCdFileMsg.setMessageTypes(messageTypesNew);
             }
-            Collection<ResCdFileMsg> attachedResCdFileMsgCollectionNew = new ArrayList<ResCdFileMsg>();
-            for (ResCdFileMsg resCdFileMsgCollectionNewResCdFileMsgToAttach : resCdFileMsgCollectionNew) {
-                resCdFileMsgCollectionNewResCdFileMsgToAttach = em.getReference(resCdFileMsgCollectionNewResCdFileMsgToAttach.getClass(), resCdFileMsgCollectionNewResCdFileMsgToAttach.getResCdFileId());
-                attachedResCdFileMsgCollectionNew.add(resCdFileMsgCollectionNewResCdFileMsgToAttach);
+            Set<ResPaymentMsg> attachedResPaymentMsgsNew = new HashSet<ResPaymentMsg>();
+            for (ResPaymentMsg resPaymentMsgsNewResPaymentMsgToAttach : resPaymentMsgsNew) {
+                resPaymentMsgsNewResPaymentMsgToAttach = em.getReference(resPaymentMsgsNewResPaymentMsgToAttach.getClass(), resPaymentMsgsNewResPaymentMsgToAttach.getPayementMsgId());
+                attachedResPaymentMsgsNew.add(resPaymentMsgsNewResPaymentMsgToAttach);
             }
-            resCdFileMsgCollectionNew = attachedResCdFileMsgCollectionNew;
-            recCdFileMsg.setResCdFileMsgCollection(resCdFileMsgCollectionNew);
-            Collection<ResPaymentMsg> attachedResPaymentMsgCollectionNew = new ArrayList<ResPaymentMsg>();
-            for (ResPaymentMsg resPaymentMsgCollectionNewResPaymentMsgToAttach : resPaymentMsgCollectionNew) {
-                resPaymentMsgCollectionNewResPaymentMsgToAttach = em.getReference(resPaymentMsgCollectionNewResPaymentMsgToAttach.getClass(), resPaymentMsgCollectionNewResPaymentMsgToAttach.getPayementMsgId());
-                attachedResPaymentMsgCollectionNew.add(resPaymentMsgCollectionNewResPaymentMsgToAttach);
+            resPaymentMsgsNew = attachedResPaymentMsgsNew;
+            recCdFileMsg.setResPaymentMsgs(resPaymentMsgsNew);
+            Set<CdFileDetails> attachedCdFileDetailsesNew = new HashSet<CdFileDetails>();
+            for (CdFileDetails cdFileDetailsesNewCdFileDetailsToAttach : cdFileDetailsesNew) {
+                cdFileDetailsesNewCdFileDetailsToAttach = em.getReference(cdFileDetailsesNewCdFileDetailsToAttach.getClass(), cdFileDetailsesNewCdFileDetailsToAttach.getId());
+                attachedCdFileDetailsesNew.add(cdFileDetailsesNewCdFileDetailsToAttach);
             }
-            resPaymentMsgCollectionNew = attachedResPaymentMsgCollectionNew;
-            recCdFileMsg.setResPaymentMsgCollection(resPaymentMsgCollectionNew);
-            Collection<TransactionLogs> attachedTransactionLogsCollectionNew = new ArrayList<TransactionLogs>();
-            for (TransactionLogs transactionLogsCollectionNewTransactionLogsToAttach : transactionLogsCollectionNew) {
-                transactionLogsCollectionNewTransactionLogsToAttach = em.getReference(transactionLogsCollectionNewTransactionLogsToAttach.getClass(), transactionLogsCollectionNewTransactionLogsToAttach.getLogID());
-                attachedTransactionLogsCollectionNew.add(transactionLogsCollectionNewTransactionLogsToAttach);
+            cdFileDetailsesNew = attachedCdFileDetailsesNew;
+            recCdFileMsg.setCdFileDetailses(cdFileDetailsesNew);
+            Set<TransactionLogs> attachedTransactionLogsesNew = new HashSet<TransactionLogs>();
+            for (TransactionLogs transactionLogsesNewTransactionLogsToAttach : transactionLogsesNew) {
+                transactionLogsesNewTransactionLogsToAttach = em.getReference(transactionLogsesNewTransactionLogsToAttach.getClass(), transactionLogsesNewTransactionLogsToAttach.getLogId());
+                attachedTransactionLogsesNew.add(transactionLogsesNewTransactionLogsToAttach);
             }
-            transactionLogsCollectionNew = attachedTransactionLogsCollectionNew;
-            recCdFileMsg.setTransactionLogsCollection(transactionLogsCollectionNew);
-            Collection<CdFileDetails> attachedCdFileDetailsCollectionNew = new ArrayList<CdFileDetails>();
-            for (CdFileDetails cdFileDetailsCollectionNewCdFileDetailsToAttach : cdFileDetailsCollectionNew) {
-                cdFileDetailsCollectionNewCdFileDetailsToAttach = em.getReference(cdFileDetailsCollectionNewCdFileDetailsToAttach.getClass(), cdFileDetailsCollectionNewCdFileDetailsToAttach.getId());
-                attachedCdFileDetailsCollectionNew.add(cdFileDetailsCollectionNewCdFileDetailsToAttach);
+            transactionLogsesNew = attachedTransactionLogsesNew;
+            recCdFileMsg.setTransactionLogses(transactionLogsesNew);
+            Set<ResCdFileMsg> attachedResCdFileMsgsNew = new HashSet<ResCdFileMsg>();
+            for (ResCdFileMsg resCdFileMsgsNewResCdFileMsgToAttach : resCdFileMsgsNew) {
+                resCdFileMsgsNewResCdFileMsgToAttach = em.getReference(resCdFileMsgsNewResCdFileMsgToAttach.getClass(), resCdFileMsgsNewResCdFileMsgToAttach.getResCdFileId());
+                attachedResCdFileMsgsNew.add(resCdFileMsgsNewResCdFileMsgToAttach);
             }
-            cdFileDetailsCollectionNew = attachedCdFileDetailsCollectionNew;
-            recCdFileMsg.setCdFileDetailsCollection(cdFileDetailsCollectionNew);
+            resCdFileMsgsNew = attachedResCdFileMsgsNew;
+            recCdFileMsg.setResCdFileMsgs(resCdFileMsgsNew);
             recCdFileMsg = em.merge(recCdFileMsg);
-            if (messageTypesMessageTypeIdOld != null && !messageTypesMessageTypeIdOld.equals(messageTypesMessageTypeIdNew)) {
-                messageTypesMessageTypeIdOld.getRecCdFileMsgCollection().remove(recCdFileMsg);
-                messageTypesMessageTypeIdOld = em.merge(messageTypesMessageTypeIdOld);
+            if (messageTypesOld != null && !messageTypesOld.equals(messageTypesNew)) {
+                messageTypesOld.getRecCdFileMsgs().remove(recCdFileMsg);
+                messageTypesOld = em.merge(messageTypesOld);
             }
-            if (messageTypesMessageTypeIdNew != null && !messageTypesMessageTypeIdNew.equals(messageTypesMessageTypeIdOld)) {
-                messageTypesMessageTypeIdNew.getRecCdFileMsgCollection().add(recCdFileMsg);
-                messageTypesMessageTypeIdNew = em.merge(messageTypesMessageTypeIdNew);
+            if (messageTypesNew != null && !messageTypesNew.equals(messageTypesOld)) {
+                messageTypesNew.getRecCdFileMsgs().add(recCdFileMsg);
+                messageTypesNew = em.merge(messageTypesNew);
             }
-            for (ResCdFileMsg resCdFileMsgCollectionNewResCdFileMsg : resCdFileMsgCollectionNew) {
-                if (!resCdFileMsgCollectionOld.contains(resCdFileMsgCollectionNewResCdFileMsg)) {
-                    RecCdFileMsg oldRecCdFileMsgRecCdFileIdOfResCdFileMsgCollectionNewResCdFileMsg = resCdFileMsgCollectionNewResCdFileMsg.getRecCdFileMsgRecCdFileId();
-                    resCdFileMsgCollectionNewResCdFileMsg.setRecCdFileMsgRecCdFileId(recCdFileMsg);
-                    resCdFileMsgCollectionNewResCdFileMsg = em.merge(resCdFileMsgCollectionNewResCdFileMsg);
-                    if (oldRecCdFileMsgRecCdFileIdOfResCdFileMsgCollectionNewResCdFileMsg != null && !oldRecCdFileMsgRecCdFileIdOfResCdFileMsgCollectionNewResCdFileMsg.equals(recCdFileMsg)) {
-                        oldRecCdFileMsgRecCdFileIdOfResCdFileMsgCollectionNewResCdFileMsg.getResCdFileMsgCollection().remove(resCdFileMsgCollectionNewResCdFileMsg);
-                        oldRecCdFileMsgRecCdFileIdOfResCdFileMsgCollectionNewResCdFileMsg = em.merge(oldRecCdFileMsgRecCdFileIdOfResCdFileMsgCollectionNewResCdFileMsg);
+            for (ResPaymentMsg resPaymentMsgsNewResPaymentMsg : resPaymentMsgsNew) {
+                if (!resPaymentMsgsOld.contains(resPaymentMsgsNewResPaymentMsg)) {
+                    RecCdFileMsg oldRecCdFileMsgOfResPaymentMsgsNewResPaymentMsg = resPaymentMsgsNewResPaymentMsg.getRecCdFileMsg();
+                    resPaymentMsgsNewResPaymentMsg.setRecCdFileMsg(recCdFileMsg);
+                    resPaymentMsgsNewResPaymentMsg = em.merge(resPaymentMsgsNewResPaymentMsg);
+                    if (oldRecCdFileMsgOfResPaymentMsgsNewResPaymentMsg != null && !oldRecCdFileMsgOfResPaymentMsgsNewResPaymentMsg.equals(recCdFileMsg)) {
+                        oldRecCdFileMsgOfResPaymentMsgsNewResPaymentMsg.getResPaymentMsgs().remove(resPaymentMsgsNewResPaymentMsg);
+                        oldRecCdFileMsgOfResPaymentMsgsNewResPaymentMsg = em.merge(oldRecCdFileMsgOfResPaymentMsgsNewResPaymentMsg);
                     }
                 }
             }
-            for (ResPaymentMsg resPaymentMsgCollectionNewResPaymentMsg : resPaymentMsgCollectionNew) {
-                if (!resPaymentMsgCollectionOld.contains(resPaymentMsgCollectionNewResPaymentMsg)) {
-                    RecCdFileMsg oldINBOXMSGInboxIDOfResPaymentMsgCollectionNewResPaymentMsg = resPaymentMsgCollectionNewResPaymentMsg.getINBOXMSGInboxID();
-                    resPaymentMsgCollectionNewResPaymentMsg.setINBOXMSGInboxID(recCdFileMsg);
-                    resPaymentMsgCollectionNewResPaymentMsg = em.merge(resPaymentMsgCollectionNewResPaymentMsg);
-                    if (oldINBOXMSGInboxIDOfResPaymentMsgCollectionNewResPaymentMsg != null && !oldINBOXMSGInboxIDOfResPaymentMsgCollectionNewResPaymentMsg.equals(recCdFileMsg)) {
-                        oldINBOXMSGInboxIDOfResPaymentMsgCollectionNewResPaymentMsg.getResPaymentMsgCollection().remove(resPaymentMsgCollectionNewResPaymentMsg);
-                        oldINBOXMSGInboxIDOfResPaymentMsgCollectionNewResPaymentMsg = em.merge(oldINBOXMSGInboxIDOfResPaymentMsgCollectionNewResPaymentMsg);
+            for (CdFileDetails cdFileDetailsesNewCdFileDetails : cdFileDetailsesNew) {
+                if (!cdFileDetailsesOld.contains(cdFileDetailsesNewCdFileDetails)) {
+                    RecCdFileMsg oldRecCdFileMsgOfCdFileDetailsesNewCdFileDetails = cdFileDetailsesNewCdFileDetails.getRecCdFileMsg();
+                    cdFileDetailsesNewCdFileDetails.setRecCdFileMsg(recCdFileMsg);
+                    cdFileDetailsesNewCdFileDetails = em.merge(cdFileDetailsesNewCdFileDetails);
+                    if (oldRecCdFileMsgOfCdFileDetailsesNewCdFileDetails != null && !oldRecCdFileMsgOfCdFileDetailsesNewCdFileDetails.equals(recCdFileMsg)) {
+                        oldRecCdFileMsgOfCdFileDetailsesNewCdFileDetails.getCdFileDetailses().remove(cdFileDetailsesNewCdFileDetails);
+                        oldRecCdFileMsgOfCdFileDetailsesNewCdFileDetails = em.merge(oldRecCdFileMsgOfCdFileDetailsesNewCdFileDetails);
                     }
                 }
             }
-            for (TransactionLogs transactionLogsCollectionOldTransactionLogs : transactionLogsCollectionOld) {
-                if (!transactionLogsCollectionNew.contains(transactionLogsCollectionOldTransactionLogs)) {
-                    transactionLogsCollectionOldTransactionLogs.setRecCdFileMsgRecCdFileId(null);
-                    transactionLogsCollectionOldTransactionLogs = em.merge(transactionLogsCollectionOldTransactionLogs);
+            for (TransactionLogs transactionLogsesOldTransactionLogs : transactionLogsesOld) {
+                if (!transactionLogsesNew.contains(transactionLogsesOldTransactionLogs)) {
+                    transactionLogsesOldTransactionLogs.setRecCdFileMsg(null);
+                    transactionLogsesOldTransactionLogs = em.merge(transactionLogsesOldTransactionLogs);
                 }
             }
-            for (TransactionLogs transactionLogsCollectionNewTransactionLogs : transactionLogsCollectionNew) {
-                if (!transactionLogsCollectionOld.contains(transactionLogsCollectionNewTransactionLogs)) {
-                    RecCdFileMsg oldRecCdFileMsgRecCdFileIdOfTransactionLogsCollectionNewTransactionLogs = transactionLogsCollectionNewTransactionLogs.getRecCdFileMsgRecCdFileId();
-                    transactionLogsCollectionNewTransactionLogs.setRecCdFileMsgRecCdFileId(recCdFileMsg);
-                    transactionLogsCollectionNewTransactionLogs = em.merge(transactionLogsCollectionNewTransactionLogs);
-                    if (oldRecCdFileMsgRecCdFileIdOfTransactionLogsCollectionNewTransactionLogs != null && !oldRecCdFileMsgRecCdFileIdOfTransactionLogsCollectionNewTransactionLogs.equals(recCdFileMsg)) {
-                        oldRecCdFileMsgRecCdFileIdOfTransactionLogsCollectionNewTransactionLogs.getTransactionLogsCollection().remove(transactionLogsCollectionNewTransactionLogs);
-                        oldRecCdFileMsgRecCdFileIdOfTransactionLogsCollectionNewTransactionLogs = em.merge(oldRecCdFileMsgRecCdFileIdOfTransactionLogsCollectionNewTransactionLogs);
+            for (TransactionLogs transactionLogsesNewTransactionLogs : transactionLogsesNew) {
+                if (!transactionLogsesOld.contains(transactionLogsesNewTransactionLogs)) {
+                    RecCdFileMsg oldRecCdFileMsgOfTransactionLogsesNewTransactionLogs = transactionLogsesNewTransactionLogs.getRecCdFileMsg();
+                    transactionLogsesNewTransactionLogs.setRecCdFileMsg(recCdFileMsg);
+                    transactionLogsesNewTransactionLogs = em.merge(transactionLogsesNewTransactionLogs);
+                    if (oldRecCdFileMsgOfTransactionLogsesNewTransactionLogs != null && !oldRecCdFileMsgOfTransactionLogsesNewTransactionLogs.equals(recCdFileMsg)) {
+                        oldRecCdFileMsgOfTransactionLogsesNewTransactionLogs.getTransactionLogses().remove(transactionLogsesNewTransactionLogs);
+                        oldRecCdFileMsgOfTransactionLogsesNewTransactionLogs = em.merge(oldRecCdFileMsgOfTransactionLogsesNewTransactionLogs);
                     }
                 }
             }
-            for (CdFileDetails cdFileDetailsCollectionNewCdFileDetails : cdFileDetailsCollectionNew) {
-                if (!cdFileDetailsCollectionOld.contains(cdFileDetailsCollectionNewCdFileDetails)) {
-                    RecCdFileMsg oldRECCDFILEMSGRECCDFILEIDRefOfCdFileDetailsCollectionNewCdFileDetails = cdFileDetailsCollectionNewCdFileDetails.getRECCDFILEMSGRECCDFILEIDRef();
-                    cdFileDetailsCollectionNewCdFileDetails.setRECCDFILEMSGRECCDFILEIDRef(recCdFileMsg);
-                    cdFileDetailsCollectionNewCdFileDetails = em.merge(cdFileDetailsCollectionNewCdFileDetails);
-                    if (oldRECCDFILEMSGRECCDFILEIDRefOfCdFileDetailsCollectionNewCdFileDetails != null && !oldRECCDFILEMSGRECCDFILEIDRefOfCdFileDetailsCollectionNewCdFileDetails.equals(recCdFileMsg)) {
-                        oldRECCDFILEMSGRECCDFILEIDRefOfCdFileDetailsCollectionNewCdFileDetails.getCdFileDetailsCollection().remove(cdFileDetailsCollectionNewCdFileDetails);
-                        oldRECCDFILEMSGRECCDFILEIDRefOfCdFileDetailsCollectionNewCdFileDetails = em.merge(oldRECCDFILEMSGRECCDFILEIDRefOfCdFileDetailsCollectionNewCdFileDetails);
+            for (ResCdFileMsg resCdFileMsgsNewResCdFileMsg : resCdFileMsgsNew) {
+                if (!resCdFileMsgsOld.contains(resCdFileMsgsNewResCdFileMsg)) {
+                    RecCdFileMsg oldRecCdFileMsgOfResCdFileMsgsNewResCdFileMsg = resCdFileMsgsNewResCdFileMsg.getRecCdFileMsg();
+                    resCdFileMsgsNewResCdFileMsg.setRecCdFileMsg(recCdFileMsg);
+                    resCdFileMsgsNewResCdFileMsg = em.merge(resCdFileMsgsNewResCdFileMsg);
+                    if (oldRecCdFileMsgOfResCdFileMsgsNewResCdFileMsg != null && !oldRecCdFileMsgOfResCdFileMsgsNewResCdFileMsg.equals(recCdFileMsg)) {
+                        oldRecCdFileMsgOfResCdFileMsgsNewResCdFileMsg.getResCdFileMsgs().remove(resCdFileMsgsNewResCdFileMsg);
+                        oldRecCdFileMsgOfResCdFileMsgsNewResCdFileMsg = em.merge(oldRecCdFileMsgOfResCdFileMsgsNewResCdFileMsg);
                     }
                 }
             }
@@ -273,7 +274,7 @@ public class RecCdFileMsgJpaController implements Serializable {
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                Integer id = recCdFileMsg.getRECCDFileID();
+                Integer id = recCdFileMsg.getRecCdFileId();
                 if (findRecCdFileMsg(id) == null) {
                     throw new NonexistentEntityException("The recCdFileMsg with id " + id + " no longer exists.");
                 }
@@ -294,44 +295,44 @@ public class RecCdFileMsgJpaController implements Serializable {
             RecCdFileMsg recCdFileMsg;
             try {
                 recCdFileMsg = em.getReference(RecCdFileMsg.class, id);
-                recCdFileMsg.getRECCDFileID();
+                recCdFileMsg.getRecCdFileId();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The recCdFileMsg with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
-            Collection<ResCdFileMsg> resCdFileMsgCollectionOrphanCheck = recCdFileMsg.getResCdFileMsgCollection();
-            for (ResCdFileMsg resCdFileMsgCollectionOrphanCheckResCdFileMsg : resCdFileMsgCollectionOrphanCheck) {
+            Set<ResPaymentMsg> resPaymentMsgsOrphanCheck = recCdFileMsg.getResPaymentMsgs();
+            for (ResPaymentMsg resPaymentMsgsOrphanCheckResPaymentMsg : resPaymentMsgsOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This RecCdFileMsg (" + recCdFileMsg + ") cannot be destroyed since the ResCdFileMsg " + resCdFileMsgCollectionOrphanCheckResCdFileMsg + " in its resCdFileMsgCollection field has a non-nullable recCdFileMsgRecCdFileId field.");
+                illegalOrphanMessages.add("This RecCdFileMsg (" + recCdFileMsg + ") cannot be destroyed since the ResPaymentMsg " + resPaymentMsgsOrphanCheckResPaymentMsg + " in its resPaymentMsgs field has a non-nullable recCdFileMsg field.");
             }
-            Collection<ResPaymentMsg> resPaymentMsgCollectionOrphanCheck = recCdFileMsg.getResPaymentMsgCollection();
-            for (ResPaymentMsg resPaymentMsgCollectionOrphanCheckResPaymentMsg : resPaymentMsgCollectionOrphanCheck) {
+            Set<CdFileDetails> cdFileDetailsesOrphanCheck = recCdFileMsg.getCdFileDetailses();
+            for (CdFileDetails cdFileDetailsesOrphanCheckCdFileDetails : cdFileDetailsesOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This RecCdFileMsg (" + recCdFileMsg + ") cannot be destroyed since the ResPaymentMsg " + resPaymentMsgCollectionOrphanCheckResPaymentMsg + " in its resPaymentMsgCollection field has a non-nullable INBOXMSGInboxID field.");
+                illegalOrphanMessages.add("This RecCdFileMsg (" + recCdFileMsg + ") cannot be destroyed since the CdFileDetails " + cdFileDetailsesOrphanCheckCdFileDetails + " in its cdFileDetailses field has a non-nullable recCdFileMsg field.");
             }
-            Collection<CdFileDetails> cdFileDetailsCollectionOrphanCheck = recCdFileMsg.getCdFileDetailsCollection();
-            for (CdFileDetails cdFileDetailsCollectionOrphanCheckCdFileDetails : cdFileDetailsCollectionOrphanCheck) {
+            Set<ResCdFileMsg> resCdFileMsgsOrphanCheck = recCdFileMsg.getResCdFileMsgs();
+            for (ResCdFileMsg resCdFileMsgsOrphanCheckResCdFileMsg : resCdFileMsgsOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This RecCdFileMsg (" + recCdFileMsg + ") cannot be destroyed since the CdFileDetails " + cdFileDetailsCollectionOrphanCheckCdFileDetails + " in its cdFileDetailsCollection field has a non-nullable RECCDFILEMSGRECCDFILEIDRef field.");
+                illegalOrphanMessages.add("This RecCdFileMsg (" + recCdFileMsg + ") cannot be destroyed since the ResCdFileMsg " + resCdFileMsgsOrphanCheckResCdFileMsg + " in its resCdFileMsgs field has a non-nullable recCdFileMsg field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
-            MessageTypes messageTypesMessageTypeId = recCdFileMsg.getMessageTypesMessageTypeId();
-            if (messageTypesMessageTypeId != null) {
-                messageTypesMessageTypeId.getRecCdFileMsgCollection().remove(recCdFileMsg);
-                messageTypesMessageTypeId = em.merge(messageTypesMessageTypeId);
+            MessageTypes messageTypes = recCdFileMsg.getMessageTypes();
+            if (messageTypes != null) {
+                messageTypes.getRecCdFileMsgs().remove(recCdFileMsg);
+                messageTypes = em.merge(messageTypes);
             }
-            Collection<TransactionLogs> transactionLogsCollection = recCdFileMsg.getTransactionLogsCollection();
-            for (TransactionLogs transactionLogsCollectionTransactionLogs : transactionLogsCollection) {
-                transactionLogsCollectionTransactionLogs.setRecCdFileMsgRecCdFileId(null);
-                transactionLogsCollectionTransactionLogs = em.merge(transactionLogsCollectionTransactionLogs);
+            Set<TransactionLogs> transactionLogses = recCdFileMsg.getTransactionLogses();
+            for (TransactionLogs transactionLogsesTransactionLogs : transactionLogses) {
+                transactionLogsesTransactionLogs.setRecCdFileMsg(null);
+                transactionLogsesTransactionLogs = em.merge(transactionLogsesTransactionLogs);
             }
             em.remove(recCdFileMsg);
             em.getTransaction().commit();

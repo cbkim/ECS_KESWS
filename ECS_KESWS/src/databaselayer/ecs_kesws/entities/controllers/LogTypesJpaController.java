@@ -15,8 +15,9 @@ import databaselayer.ecs_kesws.entities.TransactionLogs;
 import databaselayer.ecs_kesws.entities.controllers.exceptions.IllegalOrphanException;
 import databaselayer.ecs_kesws.entities.controllers.exceptions.NonexistentEntityException;
 import databaselayer.ecs_kesws.entities.controllers.exceptions.PreexistingEntityException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -37,27 +38,27 @@ public class LogTypesJpaController implements Serializable {
     }
 
     public void create(LogTypes logTypes) throws PreexistingEntityException, Exception {
-        if (logTypes.getTransactionLogsCollection() == null) {
-            logTypes.setTransactionLogsCollection(new ArrayList<TransactionLogs>());
+        if (logTypes.getTransactionLogses() == null) {
+            logTypes.setTransactionLogses(new HashSet<TransactionLogs>());
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Collection<TransactionLogs> attachedTransactionLogsCollection = new ArrayList<TransactionLogs>();
-            for (TransactionLogs transactionLogsCollectionTransactionLogsToAttach : logTypes.getTransactionLogsCollection()) {
-                transactionLogsCollectionTransactionLogsToAttach = em.getReference(transactionLogsCollectionTransactionLogsToAttach.getClass(), transactionLogsCollectionTransactionLogsToAttach.getLogID());
-                attachedTransactionLogsCollection.add(transactionLogsCollectionTransactionLogsToAttach);
+            Set<TransactionLogs> attachedTransactionLogses = new HashSet<TransactionLogs>();
+            for (TransactionLogs transactionLogsesTransactionLogsToAttach : logTypes.getTransactionLogses()) {
+                transactionLogsesTransactionLogsToAttach = em.getReference(transactionLogsesTransactionLogsToAttach.getClass(), transactionLogsesTransactionLogsToAttach.getLogId());
+                attachedTransactionLogses.add(transactionLogsesTransactionLogsToAttach);
             }
-            logTypes.setTransactionLogsCollection(attachedTransactionLogsCollection);
+            logTypes.setTransactionLogses(attachedTransactionLogses);
             em.persist(logTypes);
-            for (TransactionLogs transactionLogsCollectionTransactionLogs : logTypes.getTransactionLogsCollection()) {
-                LogTypes oldLogTypesLogIdLevelOfTransactionLogsCollectionTransactionLogs = transactionLogsCollectionTransactionLogs.getLogTypesLogIdLevel();
-                transactionLogsCollectionTransactionLogs.setLogTypesLogIdLevel(logTypes);
-                transactionLogsCollectionTransactionLogs = em.merge(transactionLogsCollectionTransactionLogs);
-                if (oldLogTypesLogIdLevelOfTransactionLogsCollectionTransactionLogs != null) {
-                    oldLogTypesLogIdLevelOfTransactionLogsCollectionTransactionLogs.getTransactionLogsCollection().remove(transactionLogsCollectionTransactionLogs);
-                    oldLogTypesLogIdLevelOfTransactionLogsCollectionTransactionLogs = em.merge(oldLogTypesLogIdLevelOfTransactionLogsCollectionTransactionLogs);
+            for (TransactionLogs transactionLogsesTransactionLogs : logTypes.getTransactionLogses()) {
+                LogTypes oldLogTypesOfTransactionLogsesTransactionLogs = transactionLogsesTransactionLogs.getLogTypes();
+                transactionLogsesTransactionLogs.setLogTypes(logTypes);
+                transactionLogsesTransactionLogs = em.merge(transactionLogsesTransactionLogs);
+                if (oldLogTypesOfTransactionLogsesTransactionLogs != null) {
+                    oldLogTypesOfTransactionLogsesTransactionLogs.getTransactionLogses().remove(transactionLogsesTransactionLogs);
+                    oldLogTypesOfTransactionLogsesTransactionLogs = em.merge(oldLogTypesOfTransactionLogsesTransactionLogs);
                 }
             }
             em.getTransaction().commit();
@@ -79,36 +80,36 @@ public class LogTypesJpaController implements Serializable {
             em = getEntityManager();
             em.getTransaction().begin();
             LogTypes persistentLogTypes = em.find(LogTypes.class, logTypes.getLogIdLevel());
-            Collection<TransactionLogs> transactionLogsCollectionOld = persistentLogTypes.getTransactionLogsCollection();
-            Collection<TransactionLogs> transactionLogsCollectionNew = logTypes.getTransactionLogsCollection();
+            Set<TransactionLogs> transactionLogsesOld = persistentLogTypes.getTransactionLogses();
+            Set<TransactionLogs> transactionLogsesNew = logTypes.getTransactionLogses();
             List<String> illegalOrphanMessages = null;
-            for (TransactionLogs transactionLogsCollectionOldTransactionLogs : transactionLogsCollectionOld) {
-                if (!transactionLogsCollectionNew.contains(transactionLogsCollectionOldTransactionLogs)) {
+            for (TransactionLogs transactionLogsesOldTransactionLogs : transactionLogsesOld) {
+                if (!transactionLogsesNew.contains(transactionLogsesOldTransactionLogs)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain TransactionLogs " + transactionLogsCollectionOldTransactionLogs + " since its logTypesLogIdLevel field is not nullable.");
+                    illegalOrphanMessages.add("You must retain TransactionLogs " + transactionLogsesOldTransactionLogs + " since its logTypes field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
-            Collection<TransactionLogs> attachedTransactionLogsCollectionNew = new ArrayList<TransactionLogs>();
-            for (TransactionLogs transactionLogsCollectionNewTransactionLogsToAttach : transactionLogsCollectionNew) {
-                transactionLogsCollectionNewTransactionLogsToAttach = em.getReference(transactionLogsCollectionNewTransactionLogsToAttach.getClass(), transactionLogsCollectionNewTransactionLogsToAttach.getLogID());
-                attachedTransactionLogsCollectionNew.add(transactionLogsCollectionNewTransactionLogsToAttach);
+            Set<TransactionLogs> attachedTransactionLogsesNew = new HashSet<TransactionLogs>();
+            for (TransactionLogs transactionLogsesNewTransactionLogsToAttach : transactionLogsesNew) {
+                transactionLogsesNewTransactionLogsToAttach = em.getReference(transactionLogsesNewTransactionLogsToAttach.getClass(), transactionLogsesNewTransactionLogsToAttach.getLogId());
+                attachedTransactionLogsesNew.add(transactionLogsesNewTransactionLogsToAttach);
             }
-            transactionLogsCollectionNew = attachedTransactionLogsCollectionNew;
-            logTypes.setTransactionLogsCollection(transactionLogsCollectionNew);
+            transactionLogsesNew = attachedTransactionLogsesNew;
+            logTypes.setTransactionLogses(transactionLogsesNew);
             logTypes = em.merge(logTypes);
-            for (TransactionLogs transactionLogsCollectionNewTransactionLogs : transactionLogsCollectionNew) {
-                if (!transactionLogsCollectionOld.contains(transactionLogsCollectionNewTransactionLogs)) {
-                    LogTypes oldLogTypesLogIdLevelOfTransactionLogsCollectionNewTransactionLogs = transactionLogsCollectionNewTransactionLogs.getLogTypesLogIdLevel();
-                    transactionLogsCollectionNewTransactionLogs.setLogTypesLogIdLevel(logTypes);
-                    transactionLogsCollectionNewTransactionLogs = em.merge(transactionLogsCollectionNewTransactionLogs);
-                    if (oldLogTypesLogIdLevelOfTransactionLogsCollectionNewTransactionLogs != null && !oldLogTypesLogIdLevelOfTransactionLogsCollectionNewTransactionLogs.equals(logTypes)) {
-                        oldLogTypesLogIdLevelOfTransactionLogsCollectionNewTransactionLogs.getTransactionLogsCollection().remove(transactionLogsCollectionNewTransactionLogs);
-                        oldLogTypesLogIdLevelOfTransactionLogsCollectionNewTransactionLogs = em.merge(oldLogTypesLogIdLevelOfTransactionLogsCollectionNewTransactionLogs);
+            for (TransactionLogs transactionLogsesNewTransactionLogs : transactionLogsesNew) {
+                if (!transactionLogsesOld.contains(transactionLogsesNewTransactionLogs)) {
+                    LogTypes oldLogTypesOfTransactionLogsesNewTransactionLogs = transactionLogsesNewTransactionLogs.getLogTypes();
+                    transactionLogsesNewTransactionLogs.setLogTypes(logTypes);
+                    transactionLogsesNewTransactionLogs = em.merge(transactionLogsesNewTransactionLogs);
+                    if (oldLogTypesOfTransactionLogsesNewTransactionLogs != null && !oldLogTypesOfTransactionLogsesNewTransactionLogs.equals(logTypes)) {
+                        oldLogTypesOfTransactionLogsesNewTransactionLogs.getTransactionLogses().remove(transactionLogsesNewTransactionLogs);
+                        oldLogTypesOfTransactionLogsesNewTransactionLogs = em.merge(oldLogTypesOfTransactionLogsesNewTransactionLogs);
                     }
                 }
             }
@@ -116,7 +117,7 @@ public class LogTypesJpaController implements Serializable {
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                Integer id = logTypes.getLogIdLevel();
+                int id = logTypes.getLogIdLevel();
                 if (findLogTypes(id) == null) {
                     throw new NonexistentEntityException("The logTypes with id " + id + " no longer exists.");
                 }
@@ -129,7 +130,7 @@ public class LogTypesJpaController implements Serializable {
         }
     }
 
-    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
+    public void destroy(int id) throws IllegalOrphanException, NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -142,12 +143,12 @@ public class LogTypesJpaController implements Serializable {
                 throw new NonexistentEntityException("The logTypes with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
-            Collection<TransactionLogs> transactionLogsCollectionOrphanCheck = logTypes.getTransactionLogsCollection();
-            for (TransactionLogs transactionLogsCollectionOrphanCheckTransactionLogs : transactionLogsCollectionOrphanCheck) {
+            Set<TransactionLogs> transactionLogsesOrphanCheck = logTypes.getTransactionLogses();
+            for (TransactionLogs transactionLogsesOrphanCheckTransactionLogs : transactionLogsesOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This LogTypes (" + logTypes + ") cannot be destroyed since the TransactionLogs " + transactionLogsCollectionOrphanCheckTransactionLogs + " in its transactionLogsCollection field has a non-nullable logTypesLogIdLevel field.");
+                illegalOrphanMessages.add("This LogTypes (" + logTypes + ") cannot be destroyed since the TransactionLogs " + transactionLogsesOrphanCheckTransactionLogs + " in its transactionLogses field has a non-nullable logTypes field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
@@ -185,7 +186,7 @@ public class LogTypesJpaController implements Serializable {
         }
     }
 
-    public LogTypes findLogTypes(Integer id) {
+    public LogTypes findLogTypes(int id) {
         EntityManager em = getEntityManager();
         try {
             return em.find(LogTypes.class, id);

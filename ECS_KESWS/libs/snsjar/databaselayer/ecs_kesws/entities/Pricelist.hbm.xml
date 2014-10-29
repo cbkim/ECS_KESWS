@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 29, 2014 3:56:08 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="databaselayer.ecs_kesws.entities.Pricelist" table="PRICELIST" catalog="ECS_KESWS" optimistic-lock="version">
+        <id name="priceId" type="java.lang.Integer">
+            <column name="Price_ID" />
+            <generator class="identity" />
+        </id>
+        <property name="priceCode" type="string">
+            <column name="Price_Code" length="100" not-null="true" />
+        </property>
+        <property name="chargeKshs" type="double">
+            <column name="Charge_Kshs" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="chargeDescription" type="string">
+            <column name="Charge_Description" length="65535" not-null="true" />
+        </property>
+        <property name="noOfEntries" type="java.lang.Integer">
+            <column name="No_Of_Entries" />
+        </property>
+        <property name="minWeight" type="java.lang.Double">
+            <column name="Min_Weight" precision="22" scale="0" />
+        </property>
+        <property name="maxWeight" type="java.lang.Double">
+            <column name="Max_Weight" precision="22" scale="0" />
+        </property>
+        <property name="isActive" type="java.lang.Integer">
+            <column name="IsActive" />
+        </property>
+        <property name="dateCreated" type="timestamp">
+            <column name="Date_Created" length="19" not-null="true" />
+        </property>
+        <property name="dateDeactivated" type="timestamp">
+            <column name="Date_Deactivated" length="19" />
+        </property>
+        <set name="pricelistInternalProductcodeDocumentMaps" table="PRICELIST_INTERNAL_PRODUCTCODE_DOCUMENT_MAP" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="PRICELIST_Price_ID_Ref" not-null="true" />
+            </key>
+            <one-to-many class="databaselayer.ecs_kesws.entities.PricelistInternalProductcodeDocumentMap" />
+        </set>
+    </class>
+</hibernate-mapping>

@@ -14,8 +14,9 @@ import javax.persistence.criteria.Root;
 import databaselayer.ecs_kesws.entities.PricelistInternalProductcodeDocumentMap;
 import databaselayer.ecs_kesws.entities.controllers.exceptions.IllegalOrphanException;
 import databaselayer.ecs_kesws.entities.controllers.exceptions.NonexistentEntityException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -36,27 +37,27 @@ public class InternalProductcodesJpaController implements Serializable {
     }
 
     public void create(InternalProductcodes internalProductcodes) {
-        if (internalProductcodes.getPricelistInternalProductcodeDocumentMapCollection() == null) {
-            internalProductcodes.setPricelistInternalProductcodeDocumentMapCollection(new ArrayList<PricelistInternalProductcodeDocumentMap>());
+        if (internalProductcodes.getPricelistInternalProductcodeDocumentMaps() == null) {
+            internalProductcodes.setPricelistInternalProductcodeDocumentMaps(new HashSet<PricelistInternalProductcodeDocumentMap>());
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Collection<PricelistInternalProductcodeDocumentMap> attachedPricelistInternalProductcodeDocumentMapCollection = new ArrayList<PricelistInternalProductcodeDocumentMap>();
-            for (PricelistInternalProductcodeDocumentMap pricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMapToAttach : internalProductcodes.getPricelistInternalProductcodeDocumentMapCollection()) {
-                pricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMapToAttach = em.getReference(pricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMapToAttach.getClass(), pricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMapToAttach.getPricelistIPCMAPID());
-                attachedPricelistInternalProductcodeDocumentMapCollection.add(pricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMapToAttach);
+            Set<PricelistInternalProductcodeDocumentMap> attachedPricelistInternalProductcodeDocumentMaps = new HashSet<PricelistInternalProductcodeDocumentMap>();
+            for (PricelistInternalProductcodeDocumentMap pricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMapToAttach : internalProductcodes.getPricelistInternalProductcodeDocumentMaps()) {
+                pricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMapToAttach = em.getReference(pricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMapToAttach.getClass(), pricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMapToAttach.getPricelistIpcMapId());
+                attachedPricelistInternalProductcodeDocumentMaps.add(pricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMapToAttach);
             }
-            internalProductcodes.setPricelistInternalProductcodeDocumentMapCollection(attachedPricelistInternalProductcodeDocumentMapCollection);
+            internalProductcodes.setPricelistInternalProductcodeDocumentMaps(attachedPricelistInternalProductcodeDocumentMaps);
             em.persist(internalProductcodes);
-            for (PricelistInternalProductcodeDocumentMap pricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMap : internalProductcodes.getPricelistInternalProductcodeDocumentMapCollection()) {
-                InternalProductcodes oldINTERNALPRODUCTCODESIPCIDRefOfPricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMap = pricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMap.getINTERNALPRODUCTCODESIPCIDRef();
-                pricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMap.setINTERNALPRODUCTCODESIPCIDRef(internalProductcodes);
-                pricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMap = em.merge(pricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMap);
-                if (oldINTERNALPRODUCTCODESIPCIDRefOfPricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMap != null) {
-                    oldINTERNALPRODUCTCODESIPCIDRefOfPricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMap.getPricelistInternalProductcodeDocumentMapCollection().remove(pricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMap);
-                    oldINTERNALPRODUCTCODESIPCIDRefOfPricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMap = em.merge(oldINTERNALPRODUCTCODESIPCIDRefOfPricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMap);
+            for (PricelistInternalProductcodeDocumentMap pricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMap : internalProductcodes.getPricelistInternalProductcodeDocumentMaps()) {
+                InternalProductcodes oldInternalProductcodesOfPricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMap = pricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMap.getInternalProductcodes();
+                pricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMap.setInternalProductcodes(internalProductcodes);
+                pricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMap = em.merge(pricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMap);
+                if (oldInternalProductcodesOfPricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMap != null) {
+                    oldInternalProductcodesOfPricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMap.getPricelistInternalProductcodeDocumentMaps().remove(pricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMap);
+                    oldInternalProductcodesOfPricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMap = em.merge(oldInternalProductcodesOfPricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMap);
                 }
             }
             em.getTransaction().commit();
@@ -73,36 +74,36 @@ public class InternalProductcodesJpaController implements Serializable {
             em = getEntityManager();
             em.getTransaction().begin();
             InternalProductcodes persistentInternalProductcodes = em.find(InternalProductcodes.class, internalProductcodes.getIpcId());
-            Collection<PricelistInternalProductcodeDocumentMap> pricelistInternalProductcodeDocumentMapCollectionOld = persistentInternalProductcodes.getPricelistInternalProductcodeDocumentMapCollection();
-            Collection<PricelistInternalProductcodeDocumentMap> pricelistInternalProductcodeDocumentMapCollectionNew = internalProductcodes.getPricelistInternalProductcodeDocumentMapCollection();
+            Set<PricelistInternalProductcodeDocumentMap> pricelistInternalProductcodeDocumentMapsOld = persistentInternalProductcodes.getPricelistInternalProductcodeDocumentMaps();
+            Set<PricelistInternalProductcodeDocumentMap> pricelistInternalProductcodeDocumentMapsNew = internalProductcodes.getPricelistInternalProductcodeDocumentMaps();
             List<String> illegalOrphanMessages = null;
-            for (PricelistInternalProductcodeDocumentMap pricelistInternalProductcodeDocumentMapCollectionOldPricelistInternalProductcodeDocumentMap : pricelistInternalProductcodeDocumentMapCollectionOld) {
-                if (!pricelistInternalProductcodeDocumentMapCollectionNew.contains(pricelistInternalProductcodeDocumentMapCollectionOldPricelistInternalProductcodeDocumentMap)) {
+            for (PricelistInternalProductcodeDocumentMap pricelistInternalProductcodeDocumentMapsOldPricelistInternalProductcodeDocumentMap : pricelistInternalProductcodeDocumentMapsOld) {
+                if (!pricelistInternalProductcodeDocumentMapsNew.contains(pricelistInternalProductcodeDocumentMapsOldPricelistInternalProductcodeDocumentMap)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain PricelistInternalProductcodeDocumentMap " + pricelistInternalProductcodeDocumentMapCollectionOldPricelistInternalProductcodeDocumentMap + " since its INTERNALPRODUCTCODESIPCIDRef field is not nullable.");
+                    illegalOrphanMessages.add("You must retain PricelistInternalProductcodeDocumentMap " + pricelistInternalProductcodeDocumentMapsOldPricelistInternalProductcodeDocumentMap + " since its internalProductcodes field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
-            Collection<PricelistInternalProductcodeDocumentMap> attachedPricelistInternalProductcodeDocumentMapCollectionNew = new ArrayList<PricelistInternalProductcodeDocumentMap>();
-            for (PricelistInternalProductcodeDocumentMap pricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMapToAttach : pricelistInternalProductcodeDocumentMapCollectionNew) {
-                pricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMapToAttach = em.getReference(pricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMapToAttach.getClass(), pricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMapToAttach.getPricelistIPCMAPID());
-                attachedPricelistInternalProductcodeDocumentMapCollectionNew.add(pricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMapToAttach);
+            Set<PricelistInternalProductcodeDocumentMap> attachedPricelistInternalProductcodeDocumentMapsNew = new HashSet<PricelistInternalProductcodeDocumentMap>();
+            for (PricelistInternalProductcodeDocumentMap pricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMapToAttach : pricelistInternalProductcodeDocumentMapsNew) {
+                pricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMapToAttach = em.getReference(pricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMapToAttach.getClass(), pricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMapToAttach.getPricelistIpcMapId());
+                attachedPricelistInternalProductcodeDocumentMapsNew.add(pricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMapToAttach);
             }
-            pricelistInternalProductcodeDocumentMapCollectionNew = attachedPricelistInternalProductcodeDocumentMapCollectionNew;
-            internalProductcodes.setPricelistInternalProductcodeDocumentMapCollection(pricelistInternalProductcodeDocumentMapCollectionNew);
+            pricelistInternalProductcodeDocumentMapsNew = attachedPricelistInternalProductcodeDocumentMapsNew;
+            internalProductcodes.setPricelistInternalProductcodeDocumentMaps(pricelistInternalProductcodeDocumentMapsNew);
             internalProductcodes = em.merge(internalProductcodes);
-            for (PricelistInternalProductcodeDocumentMap pricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMap : pricelistInternalProductcodeDocumentMapCollectionNew) {
-                if (!pricelistInternalProductcodeDocumentMapCollectionOld.contains(pricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMap)) {
-                    InternalProductcodes oldINTERNALPRODUCTCODESIPCIDRefOfPricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMap = pricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMap.getINTERNALPRODUCTCODESIPCIDRef();
-                    pricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMap.setINTERNALPRODUCTCODESIPCIDRef(internalProductcodes);
-                    pricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMap = em.merge(pricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMap);
-                    if (oldINTERNALPRODUCTCODESIPCIDRefOfPricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMap != null && !oldINTERNALPRODUCTCODESIPCIDRefOfPricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMap.equals(internalProductcodes)) {
-                        oldINTERNALPRODUCTCODESIPCIDRefOfPricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMap.getPricelistInternalProductcodeDocumentMapCollection().remove(pricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMap);
-                        oldINTERNALPRODUCTCODESIPCIDRefOfPricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMap = em.merge(oldINTERNALPRODUCTCODESIPCIDRefOfPricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMap);
+            for (PricelistInternalProductcodeDocumentMap pricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMap : pricelistInternalProductcodeDocumentMapsNew) {
+                if (!pricelistInternalProductcodeDocumentMapsOld.contains(pricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMap)) {
+                    InternalProductcodes oldInternalProductcodesOfPricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMap = pricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMap.getInternalProductcodes();
+                    pricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMap.setInternalProductcodes(internalProductcodes);
+                    pricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMap = em.merge(pricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMap);
+                    if (oldInternalProductcodesOfPricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMap != null && !oldInternalProductcodesOfPricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMap.equals(internalProductcodes)) {
+                        oldInternalProductcodesOfPricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMap.getPricelistInternalProductcodeDocumentMaps().remove(pricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMap);
+                        oldInternalProductcodesOfPricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMap = em.merge(oldInternalProductcodesOfPricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMap);
                     }
                 }
             }
@@ -136,12 +137,12 @@ public class InternalProductcodesJpaController implements Serializable {
                 throw new NonexistentEntityException("The internalProductcodes with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
-            Collection<PricelistInternalProductcodeDocumentMap> pricelistInternalProductcodeDocumentMapCollectionOrphanCheck = internalProductcodes.getPricelistInternalProductcodeDocumentMapCollection();
-            for (PricelistInternalProductcodeDocumentMap pricelistInternalProductcodeDocumentMapCollectionOrphanCheckPricelistInternalProductcodeDocumentMap : pricelistInternalProductcodeDocumentMapCollectionOrphanCheck) {
+            Set<PricelistInternalProductcodeDocumentMap> pricelistInternalProductcodeDocumentMapsOrphanCheck = internalProductcodes.getPricelistInternalProductcodeDocumentMaps();
+            for (PricelistInternalProductcodeDocumentMap pricelistInternalProductcodeDocumentMapsOrphanCheckPricelistInternalProductcodeDocumentMap : pricelistInternalProductcodeDocumentMapsOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This InternalProductcodes (" + internalProductcodes + ") cannot be destroyed since the PricelistInternalProductcodeDocumentMap " + pricelistInternalProductcodeDocumentMapCollectionOrphanCheckPricelistInternalProductcodeDocumentMap + " in its pricelistInternalProductcodeDocumentMapCollection field has a non-nullable INTERNALPRODUCTCODESIPCIDRef field.");
+                illegalOrphanMessages.add("This InternalProductcodes (" + internalProductcodes + ") cannot be destroyed since the PricelistInternalProductcodeDocumentMap " + pricelistInternalProductcodeDocumentMapsOrphanCheckPricelistInternalProductcodeDocumentMap + " in its pricelistInternalProductcodeDocumentMaps field has a non-nullable internalProductcodes field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);

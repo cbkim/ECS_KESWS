@@ -11,14 +11,15 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import databaselayer.ecs_kesws.entities.RecCdFileMsg;
+import databaselayer.ecs_kesws.entities.TransactionLogs;
+import java.util.HashSet;
+import java.util.Set;
 import databaselayer.ecs_kesws.entities.RecPaymentMsg;
-import java.util.ArrayList;
-import java.util.Collection;
 import databaselayer.ecs_kesws.entities.RecErrorMsg;
 import databaselayer.ecs_kesws.entities.ResPaymentMsg;
-import databaselayer.ecs_kesws.entities.TransactionLogs;
 import databaselayer.ecs_kesws.entities.controllers.exceptions.IllegalOrphanException;
 import databaselayer.ecs_kesws.entities.controllers.exceptions.NonexistentEntityException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -39,72 +40,72 @@ public class ResPaymentMsgJpaController implements Serializable {
     }
 
     public void create(ResPaymentMsg resPaymentMsg) {
-        if (resPaymentMsg.getRecPaymentMsgCollection() == null) {
-            resPaymentMsg.setRecPaymentMsgCollection(new ArrayList<RecPaymentMsg>());
+        if (resPaymentMsg.getTransactionLogses() == null) {
+            resPaymentMsg.setTransactionLogses(new HashSet<TransactionLogs>());
         }
-        if (resPaymentMsg.getRecErrorMsgCollection() == null) {
-            resPaymentMsg.setRecErrorMsgCollection(new ArrayList<RecErrorMsg>());
+        if (resPaymentMsg.getRecPaymentMsgs() == null) {
+            resPaymentMsg.setRecPaymentMsgs(new HashSet<RecPaymentMsg>());
         }
-        if (resPaymentMsg.getTransactionLogsCollection() == null) {
-            resPaymentMsg.setTransactionLogsCollection(new ArrayList<TransactionLogs>());
+        if (resPaymentMsg.getRecErrorMsgs() == null) {
+            resPaymentMsg.setRecErrorMsgs(new HashSet<RecErrorMsg>());
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            RecCdFileMsg INBOXMSGInboxID = resPaymentMsg.getINBOXMSGInboxID();
-            if (INBOXMSGInboxID != null) {
-                INBOXMSGInboxID = em.getReference(INBOXMSGInboxID.getClass(), INBOXMSGInboxID.getRECCDFileID());
-                resPaymentMsg.setINBOXMSGInboxID(INBOXMSGInboxID);
+            RecCdFileMsg recCdFileMsg = resPaymentMsg.getRecCdFileMsg();
+            if (recCdFileMsg != null) {
+                recCdFileMsg = em.getReference(recCdFileMsg.getClass(), recCdFileMsg.getRecCdFileId());
+                resPaymentMsg.setRecCdFileMsg(recCdFileMsg);
             }
-            Collection<RecPaymentMsg> attachedRecPaymentMsgCollection = new ArrayList<RecPaymentMsg>();
-            for (RecPaymentMsg recPaymentMsgCollectionRecPaymentMsgToAttach : resPaymentMsg.getRecPaymentMsgCollection()) {
-                recPaymentMsgCollectionRecPaymentMsgToAttach = em.getReference(recPaymentMsgCollectionRecPaymentMsgToAttach.getClass(), recPaymentMsgCollectionRecPaymentMsgToAttach.getReceivedPaymentMsgId());
-                attachedRecPaymentMsgCollection.add(recPaymentMsgCollectionRecPaymentMsgToAttach);
+            Set<TransactionLogs> attachedTransactionLogses = new HashSet<TransactionLogs>();
+            for (TransactionLogs transactionLogsesTransactionLogsToAttach : resPaymentMsg.getTransactionLogses()) {
+                transactionLogsesTransactionLogsToAttach = em.getReference(transactionLogsesTransactionLogsToAttach.getClass(), transactionLogsesTransactionLogsToAttach.getLogId());
+                attachedTransactionLogses.add(transactionLogsesTransactionLogsToAttach);
             }
-            resPaymentMsg.setRecPaymentMsgCollection(attachedRecPaymentMsgCollection);
-            Collection<RecErrorMsg> attachedRecErrorMsgCollection = new ArrayList<RecErrorMsg>();
-            for (RecErrorMsg recErrorMsgCollectionRecErrorMsgToAttach : resPaymentMsg.getRecErrorMsgCollection()) {
-                recErrorMsgCollectionRecErrorMsgToAttach = em.getReference(recErrorMsgCollectionRecErrorMsgToAttach.getClass(), recErrorMsgCollectionRecErrorMsgToAttach.getRecErrorMsgId());
-                attachedRecErrorMsgCollection.add(recErrorMsgCollectionRecErrorMsgToAttach);
+            resPaymentMsg.setTransactionLogses(attachedTransactionLogses);
+            Set<RecPaymentMsg> attachedRecPaymentMsgs = new HashSet<RecPaymentMsg>();
+            for (RecPaymentMsg recPaymentMsgsRecPaymentMsgToAttach : resPaymentMsg.getRecPaymentMsgs()) {
+                recPaymentMsgsRecPaymentMsgToAttach = em.getReference(recPaymentMsgsRecPaymentMsgToAttach.getClass(), recPaymentMsgsRecPaymentMsgToAttach.getReceivedPaymentMsgId());
+                attachedRecPaymentMsgs.add(recPaymentMsgsRecPaymentMsgToAttach);
             }
-            resPaymentMsg.setRecErrorMsgCollection(attachedRecErrorMsgCollection);
-            Collection<TransactionLogs> attachedTransactionLogsCollection = new ArrayList<TransactionLogs>();
-            for (TransactionLogs transactionLogsCollectionTransactionLogsToAttach : resPaymentMsg.getTransactionLogsCollection()) {
-                transactionLogsCollectionTransactionLogsToAttach = em.getReference(transactionLogsCollectionTransactionLogsToAttach.getClass(), transactionLogsCollectionTransactionLogsToAttach.getLogID());
-                attachedTransactionLogsCollection.add(transactionLogsCollectionTransactionLogsToAttach);
+            resPaymentMsg.setRecPaymentMsgs(attachedRecPaymentMsgs);
+            Set<RecErrorMsg> attachedRecErrorMsgs = new HashSet<RecErrorMsg>();
+            for (RecErrorMsg recErrorMsgsRecErrorMsgToAttach : resPaymentMsg.getRecErrorMsgs()) {
+                recErrorMsgsRecErrorMsgToAttach = em.getReference(recErrorMsgsRecErrorMsgToAttach.getClass(), recErrorMsgsRecErrorMsgToAttach.getRecErrorMsgId());
+                attachedRecErrorMsgs.add(recErrorMsgsRecErrorMsgToAttach);
             }
-            resPaymentMsg.setTransactionLogsCollection(attachedTransactionLogsCollection);
+            resPaymentMsg.setRecErrorMsgs(attachedRecErrorMsgs);
             em.persist(resPaymentMsg);
-            if (INBOXMSGInboxID != null) {
-                INBOXMSGInboxID.getResPaymentMsgCollection().add(resPaymentMsg);
-                INBOXMSGInboxID = em.merge(INBOXMSGInboxID);
+            if (recCdFileMsg != null) {
+                recCdFileMsg.getResPaymentMsgs().add(resPaymentMsg);
+                recCdFileMsg = em.merge(recCdFileMsg);
             }
-            for (RecPaymentMsg recPaymentMsgCollectionRecPaymentMsg : resPaymentMsg.getRecPaymentMsgCollection()) {
-                ResPaymentMsg oldSentPayementMsgPayementMsgIdOfRecPaymentMsgCollectionRecPaymentMsg = recPaymentMsgCollectionRecPaymentMsg.getSentPayementMsgPayementMsgId();
-                recPaymentMsgCollectionRecPaymentMsg.setSentPayementMsgPayementMsgId(resPaymentMsg);
-                recPaymentMsgCollectionRecPaymentMsg = em.merge(recPaymentMsgCollectionRecPaymentMsg);
-                if (oldSentPayementMsgPayementMsgIdOfRecPaymentMsgCollectionRecPaymentMsg != null) {
-                    oldSentPayementMsgPayementMsgIdOfRecPaymentMsgCollectionRecPaymentMsg.getRecPaymentMsgCollection().remove(recPaymentMsgCollectionRecPaymentMsg);
-                    oldSentPayementMsgPayementMsgIdOfRecPaymentMsgCollectionRecPaymentMsg = em.merge(oldSentPayementMsgPayementMsgIdOfRecPaymentMsgCollectionRecPaymentMsg);
+            for (TransactionLogs transactionLogsesTransactionLogs : resPaymentMsg.getTransactionLogses()) {
+                ResPaymentMsg oldResPaymentMsgOfTransactionLogsesTransactionLogs = transactionLogsesTransactionLogs.getResPaymentMsg();
+                transactionLogsesTransactionLogs.setResPaymentMsg(resPaymentMsg);
+                transactionLogsesTransactionLogs = em.merge(transactionLogsesTransactionLogs);
+                if (oldResPaymentMsgOfTransactionLogsesTransactionLogs != null) {
+                    oldResPaymentMsgOfTransactionLogsesTransactionLogs.getTransactionLogses().remove(transactionLogsesTransactionLogs);
+                    oldResPaymentMsgOfTransactionLogsesTransactionLogs = em.merge(oldResPaymentMsgOfTransactionLogsesTransactionLogs);
                 }
             }
-            for (RecErrorMsg recErrorMsgCollectionRecErrorMsg : resPaymentMsg.getRecErrorMsgCollection()) {
-                ResPaymentMsg oldResPaymentMsgPayementMsgIdOfRecErrorMsgCollectionRecErrorMsg = recErrorMsgCollectionRecErrorMsg.getResPaymentMsgPayementMsgId();
-                recErrorMsgCollectionRecErrorMsg.setResPaymentMsgPayementMsgId(resPaymentMsg);
-                recErrorMsgCollectionRecErrorMsg = em.merge(recErrorMsgCollectionRecErrorMsg);
-                if (oldResPaymentMsgPayementMsgIdOfRecErrorMsgCollectionRecErrorMsg != null) {
-                    oldResPaymentMsgPayementMsgIdOfRecErrorMsgCollectionRecErrorMsg.getRecErrorMsgCollection().remove(recErrorMsgCollectionRecErrorMsg);
-                    oldResPaymentMsgPayementMsgIdOfRecErrorMsgCollectionRecErrorMsg = em.merge(oldResPaymentMsgPayementMsgIdOfRecErrorMsgCollectionRecErrorMsg);
+            for (RecPaymentMsg recPaymentMsgsRecPaymentMsg : resPaymentMsg.getRecPaymentMsgs()) {
+                ResPaymentMsg oldResPaymentMsgOfRecPaymentMsgsRecPaymentMsg = recPaymentMsgsRecPaymentMsg.getResPaymentMsg();
+                recPaymentMsgsRecPaymentMsg.setResPaymentMsg(resPaymentMsg);
+                recPaymentMsgsRecPaymentMsg = em.merge(recPaymentMsgsRecPaymentMsg);
+                if (oldResPaymentMsgOfRecPaymentMsgsRecPaymentMsg != null) {
+                    oldResPaymentMsgOfRecPaymentMsgsRecPaymentMsg.getRecPaymentMsgs().remove(recPaymentMsgsRecPaymentMsg);
+                    oldResPaymentMsgOfRecPaymentMsgsRecPaymentMsg = em.merge(oldResPaymentMsgOfRecPaymentMsgsRecPaymentMsg);
                 }
             }
-            for (TransactionLogs transactionLogsCollectionTransactionLogs : resPaymentMsg.getTransactionLogsCollection()) {
-                ResPaymentMsg oldResPaymentMsgPayementMsgIdOfTransactionLogsCollectionTransactionLogs = transactionLogsCollectionTransactionLogs.getResPaymentMsgPayementMsgId();
-                transactionLogsCollectionTransactionLogs.setResPaymentMsgPayementMsgId(resPaymentMsg);
-                transactionLogsCollectionTransactionLogs = em.merge(transactionLogsCollectionTransactionLogs);
-                if (oldResPaymentMsgPayementMsgIdOfTransactionLogsCollectionTransactionLogs != null) {
-                    oldResPaymentMsgPayementMsgIdOfTransactionLogsCollectionTransactionLogs.getTransactionLogsCollection().remove(transactionLogsCollectionTransactionLogs);
-                    oldResPaymentMsgPayementMsgIdOfTransactionLogsCollectionTransactionLogs = em.merge(oldResPaymentMsgPayementMsgIdOfTransactionLogsCollectionTransactionLogs);
+            for (RecErrorMsg recErrorMsgsRecErrorMsg : resPaymentMsg.getRecErrorMsgs()) {
+                ResPaymentMsg oldResPaymentMsgOfRecErrorMsgsRecErrorMsg = recErrorMsgsRecErrorMsg.getResPaymentMsg();
+                recErrorMsgsRecErrorMsg.setResPaymentMsg(resPaymentMsg);
+                recErrorMsgsRecErrorMsg = em.merge(recErrorMsgsRecErrorMsg);
+                if (oldResPaymentMsgOfRecErrorMsgsRecErrorMsg != null) {
+                    oldResPaymentMsgOfRecErrorMsgsRecErrorMsg.getRecErrorMsgs().remove(recErrorMsgsRecErrorMsg);
+                    oldResPaymentMsgOfRecErrorMsgsRecErrorMsg = em.merge(oldResPaymentMsgOfRecErrorMsgsRecErrorMsg);
                 }
             }
             em.getTransaction().commit();
@@ -121,104 +122,104 @@ public class ResPaymentMsgJpaController implements Serializable {
             em = getEntityManager();
             em.getTransaction().begin();
             ResPaymentMsg persistentResPaymentMsg = em.find(ResPaymentMsg.class, resPaymentMsg.getPayementMsgId());
-            RecCdFileMsg INBOXMSGInboxIDOld = persistentResPaymentMsg.getINBOXMSGInboxID();
-            RecCdFileMsg INBOXMSGInboxIDNew = resPaymentMsg.getINBOXMSGInboxID();
-            Collection<RecPaymentMsg> recPaymentMsgCollectionOld = persistentResPaymentMsg.getRecPaymentMsgCollection();
-            Collection<RecPaymentMsg> recPaymentMsgCollectionNew = resPaymentMsg.getRecPaymentMsgCollection();
-            Collection<RecErrorMsg> recErrorMsgCollectionOld = persistentResPaymentMsg.getRecErrorMsgCollection();
-            Collection<RecErrorMsg> recErrorMsgCollectionNew = resPaymentMsg.getRecErrorMsgCollection();
-            Collection<TransactionLogs> transactionLogsCollectionOld = persistentResPaymentMsg.getTransactionLogsCollection();
-            Collection<TransactionLogs> transactionLogsCollectionNew = resPaymentMsg.getTransactionLogsCollection();
+            RecCdFileMsg recCdFileMsgOld = persistentResPaymentMsg.getRecCdFileMsg();
+            RecCdFileMsg recCdFileMsgNew = resPaymentMsg.getRecCdFileMsg();
+            Set<TransactionLogs> transactionLogsesOld = persistentResPaymentMsg.getTransactionLogses();
+            Set<TransactionLogs> transactionLogsesNew = resPaymentMsg.getTransactionLogses();
+            Set<RecPaymentMsg> recPaymentMsgsOld = persistentResPaymentMsg.getRecPaymentMsgs();
+            Set<RecPaymentMsg> recPaymentMsgsNew = resPaymentMsg.getRecPaymentMsgs();
+            Set<RecErrorMsg> recErrorMsgsOld = persistentResPaymentMsg.getRecErrorMsgs();
+            Set<RecErrorMsg> recErrorMsgsNew = resPaymentMsg.getRecErrorMsgs();
             List<String> illegalOrphanMessages = null;
-            for (RecPaymentMsg recPaymentMsgCollectionOldRecPaymentMsg : recPaymentMsgCollectionOld) {
-                if (!recPaymentMsgCollectionNew.contains(recPaymentMsgCollectionOldRecPaymentMsg)) {
+            for (RecPaymentMsg recPaymentMsgsOldRecPaymentMsg : recPaymentMsgsOld) {
+                if (!recPaymentMsgsNew.contains(recPaymentMsgsOldRecPaymentMsg)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain RecPaymentMsg " + recPaymentMsgCollectionOldRecPaymentMsg + " since its sentPayementMsgPayementMsgId field is not nullable.");
+                    illegalOrphanMessages.add("You must retain RecPaymentMsg " + recPaymentMsgsOldRecPaymentMsg + " since its resPaymentMsg field is not nullable.");
                 }
             }
-            for (RecErrorMsg recErrorMsgCollectionOldRecErrorMsg : recErrorMsgCollectionOld) {
-                if (!recErrorMsgCollectionNew.contains(recErrorMsgCollectionOldRecErrorMsg)) {
+            for (RecErrorMsg recErrorMsgsOldRecErrorMsg : recErrorMsgsOld) {
+                if (!recErrorMsgsNew.contains(recErrorMsgsOldRecErrorMsg)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain RecErrorMsg " + recErrorMsgCollectionOldRecErrorMsg + " since its resPaymentMsgPayementMsgId field is not nullable.");
+                    illegalOrphanMessages.add("You must retain RecErrorMsg " + recErrorMsgsOldRecErrorMsg + " since its resPaymentMsg field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
-            if (INBOXMSGInboxIDNew != null) {
-                INBOXMSGInboxIDNew = em.getReference(INBOXMSGInboxIDNew.getClass(), INBOXMSGInboxIDNew.getRECCDFileID());
-                resPaymentMsg.setINBOXMSGInboxID(INBOXMSGInboxIDNew);
+            if (recCdFileMsgNew != null) {
+                recCdFileMsgNew = em.getReference(recCdFileMsgNew.getClass(), recCdFileMsgNew.getRecCdFileId());
+                resPaymentMsg.setRecCdFileMsg(recCdFileMsgNew);
             }
-            Collection<RecPaymentMsg> attachedRecPaymentMsgCollectionNew = new ArrayList<RecPaymentMsg>();
-            for (RecPaymentMsg recPaymentMsgCollectionNewRecPaymentMsgToAttach : recPaymentMsgCollectionNew) {
-                recPaymentMsgCollectionNewRecPaymentMsgToAttach = em.getReference(recPaymentMsgCollectionNewRecPaymentMsgToAttach.getClass(), recPaymentMsgCollectionNewRecPaymentMsgToAttach.getReceivedPaymentMsgId());
-                attachedRecPaymentMsgCollectionNew.add(recPaymentMsgCollectionNewRecPaymentMsgToAttach);
+            Set<TransactionLogs> attachedTransactionLogsesNew = new HashSet<TransactionLogs>();
+            for (TransactionLogs transactionLogsesNewTransactionLogsToAttach : transactionLogsesNew) {
+                transactionLogsesNewTransactionLogsToAttach = em.getReference(transactionLogsesNewTransactionLogsToAttach.getClass(), transactionLogsesNewTransactionLogsToAttach.getLogId());
+                attachedTransactionLogsesNew.add(transactionLogsesNewTransactionLogsToAttach);
             }
-            recPaymentMsgCollectionNew = attachedRecPaymentMsgCollectionNew;
-            resPaymentMsg.setRecPaymentMsgCollection(recPaymentMsgCollectionNew);
-            Collection<RecErrorMsg> attachedRecErrorMsgCollectionNew = new ArrayList<RecErrorMsg>();
-            for (RecErrorMsg recErrorMsgCollectionNewRecErrorMsgToAttach : recErrorMsgCollectionNew) {
-                recErrorMsgCollectionNewRecErrorMsgToAttach = em.getReference(recErrorMsgCollectionNewRecErrorMsgToAttach.getClass(), recErrorMsgCollectionNewRecErrorMsgToAttach.getRecErrorMsgId());
-                attachedRecErrorMsgCollectionNew.add(recErrorMsgCollectionNewRecErrorMsgToAttach);
+            transactionLogsesNew = attachedTransactionLogsesNew;
+            resPaymentMsg.setTransactionLogses(transactionLogsesNew);
+            Set<RecPaymentMsg> attachedRecPaymentMsgsNew = new HashSet<RecPaymentMsg>();
+            for (RecPaymentMsg recPaymentMsgsNewRecPaymentMsgToAttach : recPaymentMsgsNew) {
+                recPaymentMsgsNewRecPaymentMsgToAttach = em.getReference(recPaymentMsgsNewRecPaymentMsgToAttach.getClass(), recPaymentMsgsNewRecPaymentMsgToAttach.getReceivedPaymentMsgId());
+                attachedRecPaymentMsgsNew.add(recPaymentMsgsNewRecPaymentMsgToAttach);
             }
-            recErrorMsgCollectionNew = attachedRecErrorMsgCollectionNew;
-            resPaymentMsg.setRecErrorMsgCollection(recErrorMsgCollectionNew);
-            Collection<TransactionLogs> attachedTransactionLogsCollectionNew = new ArrayList<TransactionLogs>();
-            for (TransactionLogs transactionLogsCollectionNewTransactionLogsToAttach : transactionLogsCollectionNew) {
-                transactionLogsCollectionNewTransactionLogsToAttach = em.getReference(transactionLogsCollectionNewTransactionLogsToAttach.getClass(), transactionLogsCollectionNewTransactionLogsToAttach.getLogID());
-                attachedTransactionLogsCollectionNew.add(transactionLogsCollectionNewTransactionLogsToAttach);
+            recPaymentMsgsNew = attachedRecPaymentMsgsNew;
+            resPaymentMsg.setRecPaymentMsgs(recPaymentMsgsNew);
+            Set<RecErrorMsg> attachedRecErrorMsgsNew = new HashSet<RecErrorMsg>();
+            for (RecErrorMsg recErrorMsgsNewRecErrorMsgToAttach : recErrorMsgsNew) {
+                recErrorMsgsNewRecErrorMsgToAttach = em.getReference(recErrorMsgsNewRecErrorMsgToAttach.getClass(), recErrorMsgsNewRecErrorMsgToAttach.getRecErrorMsgId());
+                attachedRecErrorMsgsNew.add(recErrorMsgsNewRecErrorMsgToAttach);
             }
-            transactionLogsCollectionNew = attachedTransactionLogsCollectionNew;
-            resPaymentMsg.setTransactionLogsCollection(transactionLogsCollectionNew);
+            recErrorMsgsNew = attachedRecErrorMsgsNew;
+            resPaymentMsg.setRecErrorMsgs(recErrorMsgsNew);
             resPaymentMsg = em.merge(resPaymentMsg);
-            if (INBOXMSGInboxIDOld != null && !INBOXMSGInboxIDOld.equals(INBOXMSGInboxIDNew)) {
-                INBOXMSGInboxIDOld.getResPaymentMsgCollection().remove(resPaymentMsg);
-                INBOXMSGInboxIDOld = em.merge(INBOXMSGInboxIDOld);
+            if (recCdFileMsgOld != null && !recCdFileMsgOld.equals(recCdFileMsgNew)) {
+                recCdFileMsgOld.getResPaymentMsgs().remove(resPaymentMsg);
+                recCdFileMsgOld = em.merge(recCdFileMsgOld);
             }
-            if (INBOXMSGInboxIDNew != null && !INBOXMSGInboxIDNew.equals(INBOXMSGInboxIDOld)) {
-                INBOXMSGInboxIDNew.getResPaymentMsgCollection().add(resPaymentMsg);
-                INBOXMSGInboxIDNew = em.merge(INBOXMSGInboxIDNew);
+            if (recCdFileMsgNew != null && !recCdFileMsgNew.equals(recCdFileMsgOld)) {
+                recCdFileMsgNew.getResPaymentMsgs().add(resPaymentMsg);
+                recCdFileMsgNew = em.merge(recCdFileMsgNew);
             }
-            for (RecPaymentMsg recPaymentMsgCollectionNewRecPaymentMsg : recPaymentMsgCollectionNew) {
-                if (!recPaymentMsgCollectionOld.contains(recPaymentMsgCollectionNewRecPaymentMsg)) {
-                    ResPaymentMsg oldSentPayementMsgPayementMsgIdOfRecPaymentMsgCollectionNewRecPaymentMsg = recPaymentMsgCollectionNewRecPaymentMsg.getSentPayementMsgPayementMsgId();
-                    recPaymentMsgCollectionNewRecPaymentMsg.setSentPayementMsgPayementMsgId(resPaymentMsg);
-                    recPaymentMsgCollectionNewRecPaymentMsg = em.merge(recPaymentMsgCollectionNewRecPaymentMsg);
-                    if (oldSentPayementMsgPayementMsgIdOfRecPaymentMsgCollectionNewRecPaymentMsg != null && !oldSentPayementMsgPayementMsgIdOfRecPaymentMsgCollectionNewRecPaymentMsg.equals(resPaymentMsg)) {
-                        oldSentPayementMsgPayementMsgIdOfRecPaymentMsgCollectionNewRecPaymentMsg.getRecPaymentMsgCollection().remove(recPaymentMsgCollectionNewRecPaymentMsg);
-                        oldSentPayementMsgPayementMsgIdOfRecPaymentMsgCollectionNewRecPaymentMsg = em.merge(oldSentPayementMsgPayementMsgIdOfRecPaymentMsgCollectionNewRecPaymentMsg);
+            for (TransactionLogs transactionLogsesOldTransactionLogs : transactionLogsesOld) {
+                if (!transactionLogsesNew.contains(transactionLogsesOldTransactionLogs)) {
+                    transactionLogsesOldTransactionLogs.setResPaymentMsg(null);
+                    transactionLogsesOldTransactionLogs = em.merge(transactionLogsesOldTransactionLogs);
+                }
+            }
+            for (TransactionLogs transactionLogsesNewTransactionLogs : transactionLogsesNew) {
+                if (!transactionLogsesOld.contains(transactionLogsesNewTransactionLogs)) {
+                    ResPaymentMsg oldResPaymentMsgOfTransactionLogsesNewTransactionLogs = transactionLogsesNewTransactionLogs.getResPaymentMsg();
+                    transactionLogsesNewTransactionLogs.setResPaymentMsg(resPaymentMsg);
+                    transactionLogsesNewTransactionLogs = em.merge(transactionLogsesNewTransactionLogs);
+                    if (oldResPaymentMsgOfTransactionLogsesNewTransactionLogs != null && !oldResPaymentMsgOfTransactionLogsesNewTransactionLogs.equals(resPaymentMsg)) {
+                        oldResPaymentMsgOfTransactionLogsesNewTransactionLogs.getTransactionLogses().remove(transactionLogsesNewTransactionLogs);
+                        oldResPaymentMsgOfTransactionLogsesNewTransactionLogs = em.merge(oldResPaymentMsgOfTransactionLogsesNewTransactionLogs);
                     }
                 }
             }
-            for (RecErrorMsg recErrorMsgCollectionNewRecErrorMsg : recErrorMsgCollectionNew) {
-                if (!recErrorMsgCollectionOld.contains(recErrorMsgCollectionNewRecErrorMsg)) {
-                    ResPaymentMsg oldResPaymentMsgPayementMsgIdOfRecErrorMsgCollectionNewRecErrorMsg = recErrorMsgCollectionNewRecErrorMsg.getResPaymentMsgPayementMsgId();
-                    recErrorMsgCollectionNewRecErrorMsg.setResPaymentMsgPayementMsgId(resPaymentMsg);
-                    recErrorMsgCollectionNewRecErrorMsg = em.merge(recErrorMsgCollectionNewRecErrorMsg);
-                    if (oldResPaymentMsgPayementMsgIdOfRecErrorMsgCollectionNewRecErrorMsg != null && !oldResPaymentMsgPayementMsgIdOfRecErrorMsgCollectionNewRecErrorMsg.equals(resPaymentMsg)) {
-                        oldResPaymentMsgPayementMsgIdOfRecErrorMsgCollectionNewRecErrorMsg.getRecErrorMsgCollection().remove(recErrorMsgCollectionNewRecErrorMsg);
-                        oldResPaymentMsgPayementMsgIdOfRecErrorMsgCollectionNewRecErrorMsg = em.merge(oldResPaymentMsgPayementMsgIdOfRecErrorMsgCollectionNewRecErrorMsg);
+            for (RecPaymentMsg recPaymentMsgsNewRecPaymentMsg : recPaymentMsgsNew) {
+                if (!recPaymentMsgsOld.contains(recPaymentMsgsNewRecPaymentMsg)) {
+                    ResPaymentMsg oldResPaymentMsgOfRecPaymentMsgsNewRecPaymentMsg = recPaymentMsgsNewRecPaymentMsg.getResPaymentMsg();
+                    recPaymentMsgsNewRecPaymentMsg.setResPaymentMsg(resPaymentMsg);
+                    recPaymentMsgsNewRecPaymentMsg = em.merge(recPaymentMsgsNewRecPaymentMsg);
+                    if (oldResPaymentMsgOfRecPaymentMsgsNewRecPaymentMsg != null && !oldResPaymentMsgOfRecPaymentMsgsNewRecPaymentMsg.equals(resPaymentMsg)) {
+                        oldResPaymentMsgOfRecPaymentMsgsNewRecPaymentMsg.getRecPaymentMsgs().remove(recPaymentMsgsNewRecPaymentMsg);
+                        oldResPaymentMsgOfRecPaymentMsgsNewRecPaymentMsg = em.merge(oldResPaymentMsgOfRecPaymentMsgsNewRecPaymentMsg);
                     }
                 }
             }
-            for (TransactionLogs transactionLogsCollectionOldTransactionLogs : transactionLogsCollectionOld) {
-                if (!transactionLogsCollectionNew.contains(transactionLogsCollectionOldTransactionLogs)) {
-                    transactionLogsCollectionOldTransactionLogs.setResPaymentMsgPayementMsgId(null);
-                    transactionLogsCollectionOldTransactionLogs = em.merge(transactionLogsCollectionOldTransactionLogs);
-                }
-            }
-            for (TransactionLogs transactionLogsCollectionNewTransactionLogs : transactionLogsCollectionNew) {
-                if (!transactionLogsCollectionOld.contains(transactionLogsCollectionNewTransactionLogs)) {
-                    ResPaymentMsg oldResPaymentMsgPayementMsgIdOfTransactionLogsCollectionNewTransactionLogs = transactionLogsCollectionNewTransactionLogs.getResPaymentMsgPayementMsgId();
-                    transactionLogsCollectionNewTransactionLogs.setResPaymentMsgPayementMsgId(resPaymentMsg);
-                    transactionLogsCollectionNewTransactionLogs = em.merge(transactionLogsCollectionNewTransactionLogs);
-                    if (oldResPaymentMsgPayementMsgIdOfTransactionLogsCollectionNewTransactionLogs != null && !oldResPaymentMsgPayementMsgIdOfTransactionLogsCollectionNewTransactionLogs.equals(resPaymentMsg)) {
-                        oldResPaymentMsgPayementMsgIdOfTransactionLogsCollectionNewTransactionLogs.getTransactionLogsCollection().remove(transactionLogsCollectionNewTransactionLogs);
-                        oldResPaymentMsgPayementMsgIdOfTransactionLogsCollectionNewTransactionLogs = em.merge(oldResPaymentMsgPayementMsgIdOfTransactionLogsCollectionNewTransactionLogs);
+            for (RecErrorMsg recErrorMsgsNewRecErrorMsg : recErrorMsgsNew) {
+                if (!recErrorMsgsOld.contains(recErrorMsgsNewRecErrorMsg)) {
+                    ResPaymentMsg oldResPaymentMsgOfRecErrorMsgsNewRecErrorMsg = recErrorMsgsNewRecErrorMsg.getResPaymentMsg();
+                    recErrorMsgsNewRecErrorMsg.setResPaymentMsg(resPaymentMsg);
+                    recErrorMsgsNewRecErrorMsg = em.merge(recErrorMsgsNewRecErrorMsg);
+                    if (oldResPaymentMsgOfRecErrorMsgsNewRecErrorMsg != null && !oldResPaymentMsgOfRecErrorMsgsNewRecErrorMsg.equals(resPaymentMsg)) {
+                        oldResPaymentMsgOfRecErrorMsgsNewRecErrorMsg.getRecErrorMsgs().remove(recErrorMsgsNewRecErrorMsg);
+                        oldResPaymentMsgOfRecErrorMsgsNewRecErrorMsg = em.merge(oldResPaymentMsgOfRecErrorMsgsNewRecErrorMsg);
                     }
                 }
             }
@@ -252,32 +253,32 @@ public class ResPaymentMsgJpaController implements Serializable {
                 throw new NonexistentEntityException("The resPaymentMsg with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
-            Collection<RecPaymentMsg> recPaymentMsgCollectionOrphanCheck = resPaymentMsg.getRecPaymentMsgCollection();
-            for (RecPaymentMsg recPaymentMsgCollectionOrphanCheckRecPaymentMsg : recPaymentMsgCollectionOrphanCheck) {
+            Set<RecPaymentMsg> recPaymentMsgsOrphanCheck = resPaymentMsg.getRecPaymentMsgs();
+            for (RecPaymentMsg recPaymentMsgsOrphanCheckRecPaymentMsg : recPaymentMsgsOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This ResPaymentMsg (" + resPaymentMsg + ") cannot be destroyed since the RecPaymentMsg " + recPaymentMsgCollectionOrphanCheckRecPaymentMsg + " in its recPaymentMsgCollection field has a non-nullable sentPayementMsgPayementMsgId field.");
+                illegalOrphanMessages.add("This ResPaymentMsg (" + resPaymentMsg + ") cannot be destroyed since the RecPaymentMsg " + recPaymentMsgsOrphanCheckRecPaymentMsg + " in its recPaymentMsgs field has a non-nullable resPaymentMsg field.");
             }
-            Collection<RecErrorMsg> recErrorMsgCollectionOrphanCheck = resPaymentMsg.getRecErrorMsgCollection();
-            for (RecErrorMsg recErrorMsgCollectionOrphanCheckRecErrorMsg : recErrorMsgCollectionOrphanCheck) {
+            Set<RecErrorMsg> recErrorMsgsOrphanCheck = resPaymentMsg.getRecErrorMsgs();
+            for (RecErrorMsg recErrorMsgsOrphanCheckRecErrorMsg : recErrorMsgsOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This ResPaymentMsg (" + resPaymentMsg + ") cannot be destroyed since the RecErrorMsg " + recErrorMsgCollectionOrphanCheckRecErrorMsg + " in its recErrorMsgCollection field has a non-nullable resPaymentMsgPayementMsgId field.");
+                illegalOrphanMessages.add("This ResPaymentMsg (" + resPaymentMsg + ") cannot be destroyed since the RecErrorMsg " + recErrorMsgsOrphanCheckRecErrorMsg + " in its recErrorMsgs field has a non-nullable resPaymentMsg field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
-            RecCdFileMsg INBOXMSGInboxID = resPaymentMsg.getINBOXMSGInboxID();
-            if (INBOXMSGInboxID != null) {
-                INBOXMSGInboxID.getResPaymentMsgCollection().remove(resPaymentMsg);
-                INBOXMSGInboxID = em.merge(INBOXMSGInboxID);
+            RecCdFileMsg recCdFileMsg = resPaymentMsg.getRecCdFileMsg();
+            if (recCdFileMsg != null) {
+                recCdFileMsg.getResPaymentMsgs().remove(resPaymentMsg);
+                recCdFileMsg = em.merge(recCdFileMsg);
             }
-            Collection<TransactionLogs> transactionLogsCollection = resPaymentMsg.getTransactionLogsCollection();
-            for (TransactionLogs transactionLogsCollectionTransactionLogs : transactionLogsCollection) {
-                transactionLogsCollectionTransactionLogs.setResPaymentMsgPayementMsgId(null);
-                transactionLogsCollectionTransactionLogs = em.merge(transactionLogsCollectionTransactionLogs);
+            Set<TransactionLogs> transactionLogses = resPaymentMsg.getTransactionLogses();
+            for (TransactionLogs transactionLogsesTransactionLogs : transactionLogses) {
+                transactionLogsesTransactionLogs.setResPaymentMsg(null);
+                transactionLogsesTransactionLogs = em.merge(transactionLogsesTransactionLogs);
             }
             em.remove(resPaymentMsg);
             em.getTransaction().commit();

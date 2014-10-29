@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 29, 2014 3:56:08 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="databaselayer.ecs_kesws.entities.ResCdFileMsg" table="RES_CD_FILE_MSG" catalog="ECS_KESWS" optimistic-lock="version">
+        <id name="resCdFileId" type="java.lang.Integer">
+            <column name="RES_CD_FILE_ID" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="messageTypes" class="databaselayer.ecs_kesws.entities.MessageTypes" fetch="select">
+            <column name="MESSAGE_TYPES_MESSAGE_TYPE_ID" not-null="true" />
+        </many-to-one>
+        <many-to-one name="recCdFileMsg" class="databaselayer.ecs_kesws.entities.RecCdFileMsg" fetch="select">
+            <column name="REC_CD_FILE_MSG_REC_CD_FILE_ID" not-null="true" />
+        </many-to-one>
+        <property name="messageType" type="string">
+            <column name="MESSAGE_TYPE" length="45" />
+        </property>
+        <property name="outboxFileItemTotalWeight" type="string">
+            <column name="OUTBOX_FILE_ITEM_TOTAL_WEIGHT" length="45" />
+        </property>
+        <property name="outboxFileItemTotalCost" type="string">
+            <column name="OUTBOX_FILE_ITEM_TOTAL_COST" length="45" />
+        </property>
+        <property name="outboxFileItemDetails" type="string">
+            <column name="OUTBOX_FILE_ITEM_DETAILS" length="1000" />
+        </property>
+        <property name="outboxFileItemDetailInspectionType" type="string">
+            <column name="OUTBOX_FILE_ITEM_DETAIL_INSPECTION_TYPE" length="45" />
+        </property>
+        <property name="outboxFileItemInspectorId" type="string">
+            <column name="OUTBOX_FILE_ITEM_INSPECTOR_ID" length="45" />
+        </property>
+        <property name="comments" type="string">
+            <column name="COMMENTS" />
+        </property>
+        <property name="filePath" type="string">
+            <column name="FILE_PATH" />
+        </property>
+        <property name="timeSent" type="timestamp">
+            <column name="TIME_SENT" length="19" />
+        </property>
+        <property name="sendAck" type="java.lang.Integer">
+            <column name="SEND_ACK" />
+        </property>
+        <set name="recErrorMsgs" table="REC_ERROR_MSG" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="RES_CD_FILE_MSG_RES_CD_FILE_ID" not-null="true" />
+            </key>
+            <one-to-many class="databaselayer.ecs_kesws.entities.RecErrorMsg" />
+        </set>
+        <set name="transactionLogses" table="TRANSACTION_LOGS" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="RES_CD_FILE_MSG_RES_CD_FILE_ID" not-null="true" />
+            </key>
+            <one-to-many class="databaselayer.ecs_kesws.entities.TransactionLogs" />
+        </set>
+    </class>
+</hibernate-mapping>

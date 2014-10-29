@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 29, 2014 3:56:08 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="databaselayer.ecs_kesws.entities.LogTypes" table="LOG_TYPES" catalog="ECS_KESWS" optimistic-lock="version">
+        <id name="logIdLevel" type="int">
+            <column name="LOG_ID_LEVEL" />
+            <generator class="assigned" />
+        </id>
+        <property name="logLevel" type="string">
+            <column name="LOG_LEVEL" length="45" />
+        </property>
+        <set name="transactionLogses" table="TRANSACTION_LOGS" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="LOG_TYPES_LOG_ID_LEVEL" not-null="true" />
+            </key>
+            <one-to-many class="databaselayer.ecs_kesws.entities.TransactionLogs" />
+        </set>
+    </class>
+</hibernate-mapping>

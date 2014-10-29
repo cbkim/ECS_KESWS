@@ -12,8 +12,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import databaselayer.ecs_kesws.entities.EcsResCdFileMsg;
 import databaselayer.ecs_kesws.entities.RecErrorMsg;
-import databaselayer.ecs_kesws.entities.ResPaymentMsg;
 import databaselayer.ecs_kesws.entities.ResCdFileMsg;
+import databaselayer.ecs_kesws.entities.ResPaymentMsg;
 import databaselayer.ecs_kesws.entities.controllers.exceptions.NonexistentEntityException;
 import databaselayer.ecs_kesws.entities.controllers.exceptions.PreexistingEntityException;
 import java.util.List;
@@ -40,33 +40,33 @@ public class RecErrorMsgJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            EcsResCdFileMsg ecsResCdFileMsgEcsResCdFileMsgId = recErrorMsg.getEcsResCdFileMsgEcsResCdFileMsgId();
-            if (ecsResCdFileMsgEcsResCdFileMsgId != null) {
-                ecsResCdFileMsgEcsResCdFileMsgId = em.getReference(ecsResCdFileMsgEcsResCdFileMsgId.getClass(), ecsResCdFileMsgEcsResCdFileMsgId.getEcsResCdFileMsgId());
-                recErrorMsg.setEcsResCdFileMsgEcsResCdFileMsgId(ecsResCdFileMsgEcsResCdFileMsgId);
+            EcsResCdFileMsg ecsResCdFileMsg = recErrorMsg.getEcsResCdFileMsg();
+            if (ecsResCdFileMsg != null) {
+                ecsResCdFileMsg = em.getReference(ecsResCdFileMsg.getClass(), ecsResCdFileMsg.getEcsResCdFileMsgId());
+                recErrorMsg.setEcsResCdFileMsg(ecsResCdFileMsg);
             }
-            ResPaymentMsg resPaymentMsgPayementMsgId = recErrorMsg.getResPaymentMsgPayementMsgId();
-            if (resPaymentMsgPayementMsgId != null) {
-                resPaymentMsgPayementMsgId = em.getReference(resPaymentMsgPayementMsgId.getClass(), resPaymentMsgPayementMsgId.getPayementMsgId());
-                recErrorMsg.setResPaymentMsgPayementMsgId(resPaymentMsgPayementMsgId);
+            ResCdFileMsg resCdFileMsg = recErrorMsg.getResCdFileMsg();
+            if (resCdFileMsg != null) {
+                resCdFileMsg = em.getReference(resCdFileMsg.getClass(), resCdFileMsg.getResCdFileId());
+                recErrorMsg.setResCdFileMsg(resCdFileMsg);
             }
-            ResCdFileMsg resCdFileMsgResCdFileId = recErrorMsg.getResCdFileMsgResCdFileId();
-            if (resCdFileMsgResCdFileId != null) {
-                resCdFileMsgResCdFileId = em.getReference(resCdFileMsgResCdFileId.getClass(), resCdFileMsgResCdFileId.getResCdFileId());
-                recErrorMsg.setResCdFileMsgResCdFileId(resCdFileMsgResCdFileId);
+            ResPaymentMsg resPaymentMsg = recErrorMsg.getResPaymentMsg();
+            if (resPaymentMsg != null) {
+                resPaymentMsg = em.getReference(resPaymentMsg.getClass(), resPaymentMsg.getPayementMsgId());
+                recErrorMsg.setResPaymentMsg(resPaymentMsg);
             }
             em.persist(recErrorMsg);
-            if (ecsResCdFileMsgEcsResCdFileMsgId != null) {
-                ecsResCdFileMsgEcsResCdFileMsgId.getRecErrorMsgCollection().add(recErrorMsg);
-                ecsResCdFileMsgEcsResCdFileMsgId = em.merge(ecsResCdFileMsgEcsResCdFileMsgId);
+            if (ecsResCdFileMsg != null) {
+                ecsResCdFileMsg.getRecErrorMsgs().add(recErrorMsg);
+                ecsResCdFileMsg = em.merge(ecsResCdFileMsg);
             }
-            if (resPaymentMsgPayementMsgId != null) {
-                resPaymentMsgPayementMsgId.getRecErrorMsgCollection().add(recErrorMsg);
-                resPaymentMsgPayementMsgId = em.merge(resPaymentMsgPayementMsgId);
+            if (resCdFileMsg != null) {
+                resCdFileMsg.getRecErrorMsgs().add(recErrorMsg);
+                resCdFileMsg = em.merge(resCdFileMsg);
             }
-            if (resCdFileMsgResCdFileId != null) {
-                resCdFileMsgResCdFileId.getRecErrorMsgCollection().add(recErrorMsg);
-                resCdFileMsgResCdFileId = em.merge(resCdFileMsgResCdFileId);
+            if (resPaymentMsg != null) {
+                resPaymentMsg.getRecErrorMsgs().add(recErrorMsg);
+                resPaymentMsg = em.merge(resPaymentMsg);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
@@ -87,54 +87,54 @@ public class RecErrorMsgJpaController implements Serializable {
             em = getEntityManager();
             em.getTransaction().begin();
             RecErrorMsg persistentRecErrorMsg = em.find(RecErrorMsg.class, recErrorMsg.getRecErrorMsgId());
-            EcsResCdFileMsg ecsResCdFileMsgEcsResCdFileMsgIdOld = persistentRecErrorMsg.getEcsResCdFileMsgEcsResCdFileMsgId();
-            EcsResCdFileMsg ecsResCdFileMsgEcsResCdFileMsgIdNew = recErrorMsg.getEcsResCdFileMsgEcsResCdFileMsgId();
-            ResPaymentMsg resPaymentMsgPayementMsgIdOld = persistentRecErrorMsg.getResPaymentMsgPayementMsgId();
-            ResPaymentMsg resPaymentMsgPayementMsgIdNew = recErrorMsg.getResPaymentMsgPayementMsgId();
-            ResCdFileMsg resCdFileMsgResCdFileIdOld = persistentRecErrorMsg.getResCdFileMsgResCdFileId();
-            ResCdFileMsg resCdFileMsgResCdFileIdNew = recErrorMsg.getResCdFileMsgResCdFileId();
-            if (ecsResCdFileMsgEcsResCdFileMsgIdNew != null) {
-                ecsResCdFileMsgEcsResCdFileMsgIdNew = em.getReference(ecsResCdFileMsgEcsResCdFileMsgIdNew.getClass(), ecsResCdFileMsgEcsResCdFileMsgIdNew.getEcsResCdFileMsgId());
-                recErrorMsg.setEcsResCdFileMsgEcsResCdFileMsgId(ecsResCdFileMsgEcsResCdFileMsgIdNew);
+            EcsResCdFileMsg ecsResCdFileMsgOld = persistentRecErrorMsg.getEcsResCdFileMsg();
+            EcsResCdFileMsg ecsResCdFileMsgNew = recErrorMsg.getEcsResCdFileMsg();
+            ResCdFileMsg resCdFileMsgOld = persistentRecErrorMsg.getResCdFileMsg();
+            ResCdFileMsg resCdFileMsgNew = recErrorMsg.getResCdFileMsg();
+            ResPaymentMsg resPaymentMsgOld = persistentRecErrorMsg.getResPaymentMsg();
+            ResPaymentMsg resPaymentMsgNew = recErrorMsg.getResPaymentMsg();
+            if (ecsResCdFileMsgNew != null) {
+                ecsResCdFileMsgNew = em.getReference(ecsResCdFileMsgNew.getClass(), ecsResCdFileMsgNew.getEcsResCdFileMsgId());
+                recErrorMsg.setEcsResCdFileMsg(ecsResCdFileMsgNew);
             }
-            if (resPaymentMsgPayementMsgIdNew != null) {
-                resPaymentMsgPayementMsgIdNew = em.getReference(resPaymentMsgPayementMsgIdNew.getClass(), resPaymentMsgPayementMsgIdNew.getPayementMsgId());
-                recErrorMsg.setResPaymentMsgPayementMsgId(resPaymentMsgPayementMsgIdNew);
+            if (resCdFileMsgNew != null) {
+                resCdFileMsgNew = em.getReference(resCdFileMsgNew.getClass(), resCdFileMsgNew.getResCdFileId());
+                recErrorMsg.setResCdFileMsg(resCdFileMsgNew);
             }
-            if (resCdFileMsgResCdFileIdNew != null) {
-                resCdFileMsgResCdFileIdNew = em.getReference(resCdFileMsgResCdFileIdNew.getClass(), resCdFileMsgResCdFileIdNew.getResCdFileId());
-                recErrorMsg.setResCdFileMsgResCdFileId(resCdFileMsgResCdFileIdNew);
+            if (resPaymentMsgNew != null) {
+                resPaymentMsgNew = em.getReference(resPaymentMsgNew.getClass(), resPaymentMsgNew.getPayementMsgId());
+                recErrorMsg.setResPaymentMsg(resPaymentMsgNew);
             }
             recErrorMsg = em.merge(recErrorMsg);
-            if (ecsResCdFileMsgEcsResCdFileMsgIdOld != null && !ecsResCdFileMsgEcsResCdFileMsgIdOld.equals(ecsResCdFileMsgEcsResCdFileMsgIdNew)) {
-                ecsResCdFileMsgEcsResCdFileMsgIdOld.getRecErrorMsgCollection().remove(recErrorMsg);
-                ecsResCdFileMsgEcsResCdFileMsgIdOld = em.merge(ecsResCdFileMsgEcsResCdFileMsgIdOld);
+            if (ecsResCdFileMsgOld != null && !ecsResCdFileMsgOld.equals(ecsResCdFileMsgNew)) {
+                ecsResCdFileMsgOld.getRecErrorMsgs().remove(recErrorMsg);
+                ecsResCdFileMsgOld = em.merge(ecsResCdFileMsgOld);
             }
-            if (ecsResCdFileMsgEcsResCdFileMsgIdNew != null && !ecsResCdFileMsgEcsResCdFileMsgIdNew.equals(ecsResCdFileMsgEcsResCdFileMsgIdOld)) {
-                ecsResCdFileMsgEcsResCdFileMsgIdNew.getRecErrorMsgCollection().add(recErrorMsg);
-                ecsResCdFileMsgEcsResCdFileMsgIdNew = em.merge(ecsResCdFileMsgEcsResCdFileMsgIdNew);
+            if (ecsResCdFileMsgNew != null && !ecsResCdFileMsgNew.equals(ecsResCdFileMsgOld)) {
+                ecsResCdFileMsgNew.getRecErrorMsgs().add(recErrorMsg);
+                ecsResCdFileMsgNew = em.merge(ecsResCdFileMsgNew);
             }
-            if (resPaymentMsgPayementMsgIdOld != null && !resPaymentMsgPayementMsgIdOld.equals(resPaymentMsgPayementMsgIdNew)) {
-                resPaymentMsgPayementMsgIdOld.getRecErrorMsgCollection().remove(recErrorMsg);
-                resPaymentMsgPayementMsgIdOld = em.merge(resPaymentMsgPayementMsgIdOld);
+            if (resCdFileMsgOld != null && !resCdFileMsgOld.equals(resCdFileMsgNew)) {
+                resCdFileMsgOld.getRecErrorMsgs().remove(recErrorMsg);
+                resCdFileMsgOld = em.merge(resCdFileMsgOld);
             }
-            if (resPaymentMsgPayementMsgIdNew != null && !resPaymentMsgPayementMsgIdNew.equals(resPaymentMsgPayementMsgIdOld)) {
-                resPaymentMsgPayementMsgIdNew.getRecErrorMsgCollection().add(recErrorMsg);
-                resPaymentMsgPayementMsgIdNew = em.merge(resPaymentMsgPayementMsgIdNew);
+            if (resCdFileMsgNew != null && !resCdFileMsgNew.equals(resCdFileMsgOld)) {
+                resCdFileMsgNew.getRecErrorMsgs().add(recErrorMsg);
+                resCdFileMsgNew = em.merge(resCdFileMsgNew);
             }
-            if (resCdFileMsgResCdFileIdOld != null && !resCdFileMsgResCdFileIdOld.equals(resCdFileMsgResCdFileIdNew)) {
-                resCdFileMsgResCdFileIdOld.getRecErrorMsgCollection().remove(recErrorMsg);
-                resCdFileMsgResCdFileIdOld = em.merge(resCdFileMsgResCdFileIdOld);
+            if (resPaymentMsgOld != null && !resPaymentMsgOld.equals(resPaymentMsgNew)) {
+                resPaymentMsgOld.getRecErrorMsgs().remove(recErrorMsg);
+                resPaymentMsgOld = em.merge(resPaymentMsgOld);
             }
-            if (resCdFileMsgResCdFileIdNew != null && !resCdFileMsgResCdFileIdNew.equals(resCdFileMsgResCdFileIdOld)) {
-                resCdFileMsgResCdFileIdNew.getRecErrorMsgCollection().add(recErrorMsg);
-                resCdFileMsgResCdFileIdNew = em.merge(resCdFileMsgResCdFileIdNew);
+            if (resPaymentMsgNew != null && !resPaymentMsgNew.equals(resPaymentMsgOld)) {
+                resPaymentMsgNew.getRecErrorMsgs().add(recErrorMsg);
+                resPaymentMsgNew = em.merge(resPaymentMsgNew);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                Integer id = recErrorMsg.getRecErrorMsgId();
+                int id = recErrorMsg.getRecErrorMsgId();
                 if (findRecErrorMsg(id) == null) {
                     throw new NonexistentEntityException("The recErrorMsg with id " + id + " no longer exists.");
                 }
@@ -147,7 +147,7 @@ public class RecErrorMsgJpaController implements Serializable {
         }
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(int id) throws NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -159,20 +159,20 @@ public class RecErrorMsgJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The recErrorMsg with id " + id + " no longer exists.", enfe);
             }
-            EcsResCdFileMsg ecsResCdFileMsgEcsResCdFileMsgId = recErrorMsg.getEcsResCdFileMsgEcsResCdFileMsgId();
-            if (ecsResCdFileMsgEcsResCdFileMsgId != null) {
-                ecsResCdFileMsgEcsResCdFileMsgId.getRecErrorMsgCollection().remove(recErrorMsg);
-                ecsResCdFileMsgEcsResCdFileMsgId = em.merge(ecsResCdFileMsgEcsResCdFileMsgId);
+            EcsResCdFileMsg ecsResCdFileMsg = recErrorMsg.getEcsResCdFileMsg();
+            if (ecsResCdFileMsg != null) {
+                ecsResCdFileMsg.getRecErrorMsgs().remove(recErrorMsg);
+                ecsResCdFileMsg = em.merge(ecsResCdFileMsg);
             }
-            ResPaymentMsg resPaymentMsgPayementMsgId = recErrorMsg.getResPaymentMsgPayementMsgId();
-            if (resPaymentMsgPayementMsgId != null) {
-                resPaymentMsgPayementMsgId.getRecErrorMsgCollection().remove(recErrorMsg);
-                resPaymentMsgPayementMsgId = em.merge(resPaymentMsgPayementMsgId);
+            ResCdFileMsg resCdFileMsg = recErrorMsg.getResCdFileMsg();
+            if (resCdFileMsg != null) {
+                resCdFileMsg.getRecErrorMsgs().remove(recErrorMsg);
+                resCdFileMsg = em.merge(resCdFileMsg);
             }
-            ResCdFileMsg resCdFileMsgResCdFileId = recErrorMsg.getResCdFileMsgResCdFileId();
-            if (resCdFileMsgResCdFileId != null) {
-                resCdFileMsgResCdFileId.getRecErrorMsgCollection().remove(recErrorMsg);
-                resCdFileMsgResCdFileId = em.merge(resCdFileMsgResCdFileId);
+            ResPaymentMsg resPaymentMsg = recErrorMsg.getResPaymentMsg();
+            if (resPaymentMsg != null) {
+                resPaymentMsg.getRecErrorMsgs().remove(recErrorMsg);
+                resPaymentMsg = em.merge(resPaymentMsg);
             }
             em.remove(recErrorMsg);
             em.getTransaction().commit();
@@ -207,7 +207,7 @@ public class RecErrorMsgJpaController implements Serializable {
         }
     }
 
-    public RecErrorMsg findRecErrorMsg(Integer id) {
+    public RecErrorMsg findRecErrorMsg(int id) {
         EntityManager em = getEntityManager();
         try {
             return em.find(RecErrorMsg.class, id);

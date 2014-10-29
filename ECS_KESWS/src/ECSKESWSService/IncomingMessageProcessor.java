@@ -46,7 +46,7 @@ public class IncomingMessageProcessor implements Runnable {
 
                     fileprocessor = new FileProcessor();
                     try{
-                //   fileprocessor.retrieveMessage(ConfigMapper.getMHXUserProfileFilePath(), ConfigMapper.getSenderId(), ConfigMapper.getInboxFolder(), true);
+                   fileprocessor.retrieveMessage(ConfigMapper.getMHXUserProfileFilePath(), ConfigMapper.getSenderId(), ConfigMapper.getInboxFolder(), true);
                     }
                     catch (Exception e){
                         e.printStackTrace();

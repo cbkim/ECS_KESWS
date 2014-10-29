@@ -61,7 +61,7 @@ public class KeswsInspectorsJpaController implements Serializable {
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                Integer id = keswsInspectors.getKeswsInspectorsId();
+                int id = keswsInspectors.getKeswsInspectorsId();
                 if (findKeswsInspectors(id) == null) {
                     throw new NonexistentEntityException("The keswsInspectors with id " + id + " no longer exists.");
                 }
@@ -74,7 +74,7 @@ public class KeswsInspectorsJpaController implements Serializable {
         }
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(int id) throws NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -119,7 +119,7 @@ public class KeswsInspectorsJpaController implements Serializable {
         }
     }
 
-    public KeswsInspectors findKeswsInspectors(Integer id) {
+    public KeswsInspectors findKeswsInspectors(int id) {
         EntityManager em = getEntityManager();
         try {
             return em.find(KeswsInspectors.class, id);

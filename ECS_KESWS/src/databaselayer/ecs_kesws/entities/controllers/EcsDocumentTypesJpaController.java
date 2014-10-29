@@ -10,14 +10,15 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import databaselayer.ecs_kesws.entities.PricelistInternalProductcodeDocumentMap;
-import java.util.ArrayList;
-import java.util.Collection;
 import databaselayer.ecs_kesws.entities.CdFileDetails;
 import databaselayer.ecs_kesws.entities.EcsDocumentTypes;
+import java.util.HashSet;
+import java.util.Set;
+import databaselayer.ecs_kesws.entities.PricelistInternalProductcodeDocumentMap;
 import databaselayer.ecs_kesws.entities.controllers.exceptions.IllegalOrphanException;
 import databaselayer.ecs_kesws.entities.controllers.exceptions.NonexistentEntityException;
 import databaselayer.ecs_kesws.entities.controllers.exceptions.PreexistingEntityException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -38,45 +39,45 @@ public class EcsDocumentTypesJpaController implements Serializable {
     }
 
     public void create(EcsDocumentTypes ecsDocumentTypes) throws PreexistingEntityException, Exception {
-        if (ecsDocumentTypes.getPricelistInternalProductcodeDocumentMapCollection() == null) {
-            ecsDocumentTypes.setPricelistInternalProductcodeDocumentMapCollection(new ArrayList<PricelistInternalProductcodeDocumentMap>());
+        if (ecsDocumentTypes.getCdFileDetailses() == null) {
+            ecsDocumentTypes.setCdFileDetailses(new HashSet<CdFileDetails>());
         }
-        if (ecsDocumentTypes.getCdFileDetailsCollection() == null) {
-            ecsDocumentTypes.setCdFileDetailsCollection(new ArrayList<CdFileDetails>());
+        if (ecsDocumentTypes.getPricelistInternalProductcodeDocumentMaps() == null) {
+            ecsDocumentTypes.setPricelistInternalProductcodeDocumentMaps(new HashSet<PricelistInternalProductcodeDocumentMap>());
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Collection<PricelistInternalProductcodeDocumentMap> attachedPricelistInternalProductcodeDocumentMapCollection = new ArrayList<PricelistInternalProductcodeDocumentMap>();
-            for (PricelistInternalProductcodeDocumentMap pricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMapToAttach : ecsDocumentTypes.getPricelistInternalProductcodeDocumentMapCollection()) {
-                pricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMapToAttach = em.getReference(pricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMapToAttach.getClass(), pricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMapToAttach.getPricelistIPCMAPID());
-                attachedPricelistInternalProductcodeDocumentMapCollection.add(pricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMapToAttach);
+            Set<CdFileDetails> attachedCdFileDetailses = new HashSet<CdFileDetails>();
+            for (CdFileDetails cdFileDetailsesCdFileDetailsToAttach : ecsDocumentTypes.getCdFileDetailses()) {
+                cdFileDetailsesCdFileDetailsToAttach = em.getReference(cdFileDetailsesCdFileDetailsToAttach.getClass(), cdFileDetailsesCdFileDetailsToAttach.getId());
+                attachedCdFileDetailses.add(cdFileDetailsesCdFileDetailsToAttach);
             }
-            ecsDocumentTypes.setPricelistInternalProductcodeDocumentMapCollection(attachedPricelistInternalProductcodeDocumentMapCollection);
-            Collection<CdFileDetails> attachedCdFileDetailsCollection = new ArrayList<CdFileDetails>();
-            for (CdFileDetails cdFileDetailsCollectionCdFileDetailsToAttach : ecsDocumentTypes.getCdFileDetailsCollection()) {
-                cdFileDetailsCollectionCdFileDetailsToAttach = em.getReference(cdFileDetailsCollectionCdFileDetailsToAttach.getClass(), cdFileDetailsCollectionCdFileDetailsToAttach.getId());
-                attachedCdFileDetailsCollection.add(cdFileDetailsCollectionCdFileDetailsToAttach);
+            ecsDocumentTypes.setCdFileDetailses(attachedCdFileDetailses);
+            Set<PricelistInternalProductcodeDocumentMap> attachedPricelistInternalProductcodeDocumentMaps = new HashSet<PricelistInternalProductcodeDocumentMap>();
+            for (PricelistInternalProductcodeDocumentMap pricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMapToAttach : ecsDocumentTypes.getPricelistInternalProductcodeDocumentMaps()) {
+                pricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMapToAttach = em.getReference(pricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMapToAttach.getClass(), pricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMapToAttach.getPricelistIpcMapId());
+                attachedPricelistInternalProductcodeDocumentMaps.add(pricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMapToAttach);
             }
-            ecsDocumentTypes.setCdFileDetailsCollection(attachedCdFileDetailsCollection);
+            ecsDocumentTypes.setPricelistInternalProductcodeDocumentMaps(attachedPricelistInternalProductcodeDocumentMaps);
             em.persist(ecsDocumentTypes);
-            for (PricelistInternalProductcodeDocumentMap pricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMap : ecsDocumentTypes.getPricelistInternalProductcodeDocumentMapCollection()) {
-                EcsDocumentTypes oldDOCUMENTTYPESidOfPricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMap = pricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMap.getDOCUMENTTYPESid();
-                pricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMap.setDOCUMENTTYPESid(ecsDocumentTypes);
-                pricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMap = em.merge(pricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMap);
-                if (oldDOCUMENTTYPESidOfPricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMap != null) {
-                    oldDOCUMENTTYPESidOfPricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMap.getPricelistInternalProductcodeDocumentMapCollection().remove(pricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMap);
-                    oldDOCUMENTTYPESidOfPricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMap = em.merge(oldDOCUMENTTYPESidOfPricelistInternalProductcodeDocumentMapCollectionPricelistInternalProductcodeDocumentMap);
+            for (CdFileDetails cdFileDetailsesCdFileDetails : ecsDocumentTypes.getCdFileDetailses()) {
+                EcsDocumentTypes oldEcsDocumentTypesOfCdFileDetailsesCdFileDetails = cdFileDetailsesCdFileDetails.getEcsDocumentTypes();
+                cdFileDetailsesCdFileDetails.setEcsDocumentTypes(ecsDocumentTypes);
+                cdFileDetailsesCdFileDetails = em.merge(cdFileDetailsesCdFileDetails);
+                if (oldEcsDocumentTypesOfCdFileDetailsesCdFileDetails != null) {
+                    oldEcsDocumentTypesOfCdFileDetailsesCdFileDetails.getCdFileDetailses().remove(cdFileDetailsesCdFileDetails);
+                    oldEcsDocumentTypesOfCdFileDetailsesCdFileDetails = em.merge(oldEcsDocumentTypesOfCdFileDetailsesCdFileDetails);
                 }
             }
-            for (CdFileDetails cdFileDetailsCollectionCdFileDetails : ecsDocumentTypes.getCdFileDetailsCollection()) {
-                EcsDocumentTypes oldDOCUMENTTYPESidRefOfCdFileDetailsCollectionCdFileDetails = cdFileDetailsCollectionCdFileDetails.getDOCUMENTTYPESidRef();
-                cdFileDetailsCollectionCdFileDetails.setDOCUMENTTYPESidRef(ecsDocumentTypes);
-                cdFileDetailsCollectionCdFileDetails = em.merge(cdFileDetailsCollectionCdFileDetails);
-                if (oldDOCUMENTTYPESidRefOfCdFileDetailsCollectionCdFileDetails != null) {
-                    oldDOCUMENTTYPESidRefOfCdFileDetailsCollectionCdFileDetails.getCdFileDetailsCollection().remove(cdFileDetailsCollectionCdFileDetails);
-                    oldDOCUMENTTYPESidRefOfCdFileDetailsCollectionCdFileDetails = em.merge(oldDOCUMENTTYPESidRefOfCdFileDetailsCollectionCdFileDetails);
+            for (PricelistInternalProductcodeDocumentMap pricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMap : ecsDocumentTypes.getPricelistInternalProductcodeDocumentMaps()) {
+                EcsDocumentTypes oldEcsDocumentTypesOfPricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMap = pricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMap.getEcsDocumentTypes();
+                pricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMap.setEcsDocumentTypes(ecsDocumentTypes);
+                pricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMap = em.merge(pricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMap);
+                if (oldEcsDocumentTypesOfPricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMap != null) {
+                    oldEcsDocumentTypesOfPricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMap.getPricelistInternalProductcodeDocumentMaps().remove(pricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMap);
+                    oldEcsDocumentTypesOfPricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMap = em.merge(oldEcsDocumentTypesOfPricelistInternalProductcodeDocumentMapsPricelistInternalProductcodeDocumentMap);
                 }
             }
             em.getTransaction().commit();
@@ -98,64 +99,64 @@ public class EcsDocumentTypesJpaController implements Serializable {
             em = getEntityManager();
             em.getTransaction().begin();
             EcsDocumentTypes persistentEcsDocumentTypes = em.find(EcsDocumentTypes.class, ecsDocumentTypes.getId());
-            Collection<PricelistInternalProductcodeDocumentMap> pricelistInternalProductcodeDocumentMapCollectionOld = persistentEcsDocumentTypes.getPricelistInternalProductcodeDocumentMapCollection();
-            Collection<PricelistInternalProductcodeDocumentMap> pricelistInternalProductcodeDocumentMapCollectionNew = ecsDocumentTypes.getPricelistInternalProductcodeDocumentMapCollection();
-            Collection<CdFileDetails> cdFileDetailsCollectionOld = persistentEcsDocumentTypes.getCdFileDetailsCollection();
-            Collection<CdFileDetails> cdFileDetailsCollectionNew = ecsDocumentTypes.getCdFileDetailsCollection();
+            Set<CdFileDetails> cdFileDetailsesOld = persistentEcsDocumentTypes.getCdFileDetailses();
+            Set<CdFileDetails> cdFileDetailsesNew = ecsDocumentTypes.getCdFileDetailses();
+            Set<PricelistInternalProductcodeDocumentMap> pricelistInternalProductcodeDocumentMapsOld = persistentEcsDocumentTypes.getPricelistInternalProductcodeDocumentMaps();
+            Set<PricelistInternalProductcodeDocumentMap> pricelistInternalProductcodeDocumentMapsNew = ecsDocumentTypes.getPricelistInternalProductcodeDocumentMaps();
             List<String> illegalOrphanMessages = null;
-            for (PricelistInternalProductcodeDocumentMap pricelistInternalProductcodeDocumentMapCollectionOldPricelistInternalProductcodeDocumentMap : pricelistInternalProductcodeDocumentMapCollectionOld) {
-                if (!pricelistInternalProductcodeDocumentMapCollectionNew.contains(pricelistInternalProductcodeDocumentMapCollectionOldPricelistInternalProductcodeDocumentMap)) {
+            for (CdFileDetails cdFileDetailsesOldCdFileDetails : cdFileDetailsesOld) {
+                if (!cdFileDetailsesNew.contains(cdFileDetailsesOldCdFileDetails)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain PricelistInternalProductcodeDocumentMap " + pricelistInternalProductcodeDocumentMapCollectionOldPricelistInternalProductcodeDocumentMap + " since its DOCUMENTTYPESid field is not nullable.");
+                    illegalOrphanMessages.add("You must retain CdFileDetails " + cdFileDetailsesOldCdFileDetails + " since its ecsDocumentTypes field is not nullable.");
                 }
             }
-            for (CdFileDetails cdFileDetailsCollectionOldCdFileDetails : cdFileDetailsCollectionOld) {
-                if (!cdFileDetailsCollectionNew.contains(cdFileDetailsCollectionOldCdFileDetails)) {
+            for (PricelistInternalProductcodeDocumentMap pricelistInternalProductcodeDocumentMapsOldPricelistInternalProductcodeDocumentMap : pricelistInternalProductcodeDocumentMapsOld) {
+                if (!pricelistInternalProductcodeDocumentMapsNew.contains(pricelistInternalProductcodeDocumentMapsOldPricelistInternalProductcodeDocumentMap)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain CdFileDetails " + cdFileDetailsCollectionOldCdFileDetails + " since its DOCUMENTTYPESidRef field is not nullable.");
+                    illegalOrphanMessages.add("You must retain PricelistInternalProductcodeDocumentMap " + pricelistInternalProductcodeDocumentMapsOldPricelistInternalProductcodeDocumentMap + " since its ecsDocumentTypes field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
-            Collection<PricelistInternalProductcodeDocumentMap> attachedPricelistInternalProductcodeDocumentMapCollectionNew = new ArrayList<PricelistInternalProductcodeDocumentMap>();
-            for (PricelistInternalProductcodeDocumentMap pricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMapToAttach : pricelistInternalProductcodeDocumentMapCollectionNew) {
-                pricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMapToAttach = em.getReference(pricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMapToAttach.getClass(), pricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMapToAttach.getPricelistIPCMAPID());
-                attachedPricelistInternalProductcodeDocumentMapCollectionNew.add(pricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMapToAttach);
+            Set<CdFileDetails> attachedCdFileDetailsesNew = new HashSet<CdFileDetails>();
+            for (CdFileDetails cdFileDetailsesNewCdFileDetailsToAttach : cdFileDetailsesNew) {
+                cdFileDetailsesNewCdFileDetailsToAttach = em.getReference(cdFileDetailsesNewCdFileDetailsToAttach.getClass(), cdFileDetailsesNewCdFileDetailsToAttach.getId());
+                attachedCdFileDetailsesNew.add(cdFileDetailsesNewCdFileDetailsToAttach);
             }
-            pricelistInternalProductcodeDocumentMapCollectionNew = attachedPricelistInternalProductcodeDocumentMapCollectionNew;
-            ecsDocumentTypes.setPricelistInternalProductcodeDocumentMapCollection(pricelistInternalProductcodeDocumentMapCollectionNew);
-            Collection<CdFileDetails> attachedCdFileDetailsCollectionNew = new ArrayList<CdFileDetails>();
-            for (CdFileDetails cdFileDetailsCollectionNewCdFileDetailsToAttach : cdFileDetailsCollectionNew) {
-                cdFileDetailsCollectionNewCdFileDetailsToAttach = em.getReference(cdFileDetailsCollectionNewCdFileDetailsToAttach.getClass(), cdFileDetailsCollectionNewCdFileDetailsToAttach.getId());
-                attachedCdFileDetailsCollectionNew.add(cdFileDetailsCollectionNewCdFileDetailsToAttach);
+            cdFileDetailsesNew = attachedCdFileDetailsesNew;
+            ecsDocumentTypes.setCdFileDetailses(cdFileDetailsesNew);
+            Set<PricelistInternalProductcodeDocumentMap> attachedPricelistInternalProductcodeDocumentMapsNew = new HashSet<PricelistInternalProductcodeDocumentMap>();
+            for (PricelistInternalProductcodeDocumentMap pricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMapToAttach : pricelistInternalProductcodeDocumentMapsNew) {
+                pricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMapToAttach = em.getReference(pricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMapToAttach.getClass(), pricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMapToAttach.getPricelistIpcMapId());
+                attachedPricelistInternalProductcodeDocumentMapsNew.add(pricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMapToAttach);
             }
-            cdFileDetailsCollectionNew = attachedCdFileDetailsCollectionNew;
-            ecsDocumentTypes.setCdFileDetailsCollection(cdFileDetailsCollectionNew);
+            pricelistInternalProductcodeDocumentMapsNew = attachedPricelistInternalProductcodeDocumentMapsNew;
+            ecsDocumentTypes.setPricelistInternalProductcodeDocumentMaps(pricelistInternalProductcodeDocumentMapsNew);
             ecsDocumentTypes = em.merge(ecsDocumentTypes);
-            for (PricelistInternalProductcodeDocumentMap pricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMap : pricelistInternalProductcodeDocumentMapCollectionNew) {
-                if (!pricelistInternalProductcodeDocumentMapCollectionOld.contains(pricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMap)) {
-                    EcsDocumentTypes oldDOCUMENTTYPESidOfPricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMap = pricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMap.getDOCUMENTTYPESid();
-                    pricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMap.setDOCUMENTTYPESid(ecsDocumentTypes);
-                    pricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMap = em.merge(pricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMap);
-                    if (oldDOCUMENTTYPESidOfPricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMap != null && !oldDOCUMENTTYPESidOfPricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMap.equals(ecsDocumentTypes)) {
-                        oldDOCUMENTTYPESidOfPricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMap.getPricelistInternalProductcodeDocumentMapCollection().remove(pricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMap);
-                        oldDOCUMENTTYPESidOfPricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMap = em.merge(oldDOCUMENTTYPESidOfPricelistInternalProductcodeDocumentMapCollectionNewPricelistInternalProductcodeDocumentMap);
+            for (CdFileDetails cdFileDetailsesNewCdFileDetails : cdFileDetailsesNew) {
+                if (!cdFileDetailsesOld.contains(cdFileDetailsesNewCdFileDetails)) {
+                    EcsDocumentTypes oldEcsDocumentTypesOfCdFileDetailsesNewCdFileDetails = cdFileDetailsesNewCdFileDetails.getEcsDocumentTypes();
+                    cdFileDetailsesNewCdFileDetails.setEcsDocumentTypes(ecsDocumentTypes);
+                    cdFileDetailsesNewCdFileDetails = em.merge(cdFileDetailsesNewCdFileDetails);
+                    if (oldEcsDocumentTypesOfCdFileDetailsesNewCdFileDetails != null && !oldEcsDocumentTypesOfCdFileDetailsesNewCdFileDetails.equals(ecsDocumentTypes)) {
+                        oldEcsDocumentTypesOfCdFileDetailsesNewCdFileDetails.getCdFileDetailses().remove(cdFileDetailsesNewCdFileDetails);
+                        oldEcsDocumentTypesOfCdFileDetailsesNewCdFileDetails = em.merge(oldEcsDocumentTypesOfCdFileDetailsesNewCdFileDetails);
                     }
                 }
             }
-            for (CdFileDetails cdFileDetailsCollectionNewCdFileDetails : cdFileDetailsCollectionNew) {
-                if (!cdFileDetailsCollectionOld.contains(cdFileDetailsCollectionNewCdFileDetails)) {
-                    EcsDocumentTypes oldDOCUMENTTYPESidRefOfCdFileDetailsCollectionNewCdFileDetails = cdFileDetailsCollectionNewCdFileDetails.getDOCUMENTTYPESidRef();
-                    cdFileDetailsCollectionNewCdFileDetails.setDOCUMENTTYPESidRef(ecsDocumentTypes);
-                    cdFileDetailsCollectionNewCdFileDetails = em.merge(cdFileDetailsCollectionNewCdFileDetails);
-                    if (oldDOCUMENTTYPESidRefOfCdFileDetailsCollectionNewCdFileDetails != null && !oldDOCUMENTTYPESidRefOfCdFileDetailsCollectionNewCdFileDetails.equals(ecsDocumentTypes)) {
-                        oldDOCUMENTTYPESidRefOfCdFileDetailsCollectionNewCdFileDetails.getCdFileDetailsCollection().remove(cdFileDetailsCollectionNewCdFileDetails);
-                        oldDOCUMENTTYPESidRefOfCdFileDetailsCollectionNewCdFileDetails = em.merge(oldDOCUMENTTYPESidRefOfCdFileDetailsCollectionNewCdFileDetails);
+            for (PricelistInternalProductcodeDocumentMap pricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMap : pricelistInternalProductcodeDocumentMapsNew) {
+                if (!pricelistInternalProductcodeDocumentMapsOld.contains(pricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMap)) {
+                    EcsDocumentTypes oldEcsDocumentTypesOfPricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMap = pricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMap.getEcsDocumentTypes();
+                    pricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMap.setEcsDocumentTypes(ecsDocumentTypes);
+                    pricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMap = em.merge(pricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMap);
+                    if (oldEcsDocumentTypesOfPricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMap != null && !oldEcsDocumentTypesOfPricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMap.equals(ecsDocumentTypes)) {
+                        oldEcsDocumentTypesOfPricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMap.getPricelistInternalProductcodeDocumentMaps().remove(pricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMap);
+                        oldEcsDocumentTypesOfPricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMap = em.merge(oldEcsDocumentTypesOfPricelistInternalProductcodeDocumentMapsNewPricelistInternalProductcodeDocumentMap);
                     }
                 }
             }
@@ -163,7 +164,7 @@ public class EcsDocumentTypesJpaController implements Serializable {
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                Integer id = ecsDocumentTypes.getId();
+                int id = ecsDocumentTypes.getId();
                 if (findEcsDocumentTypes(id) == null) {
                     throw new NonexistentEntityException("The ecsDocumentTypes with id " + id + " no longer exists.");
                 }
@@ -176,7 +177,7 @@ public class EcsDocumentTypesJpaController implements Serializable {
         }
     }
 
-    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
+    public void destroy(int id) throws IllegalOrphanException, NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -189,19 +190,19 @@ public class EcsDocumentTypesJpaController implements Serializable {
                 throw new NonexistentEntityException("The ecsDocumentTypes with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
-            Collection<PricelistInternalProductcodeDocumentMap> pricelistInternalProductcodeDocumentMapCollectionOrphanCheck = ecsDocumentTypes.getPricelistInternalProductcodeDocumentMapCollection();
-            for (PricelistInternalProductcodeDocumentMap pricelistInternalProductcodeDocumentMapCollectionOrphanCheckPricelistInternalProductcodeDocumentMap : pricelistInternalProductcodeDocumentMapCollectionOrphanCheck) {
+            Set<CdFileDetails> cdFileDetailsesOrphanCheck = ecsDocumentTypes.getCdFileDetailses();
+            for (CdFileDetails cdFileDetailsesOrphanCheckCdFileDetails : cdFileDetailsesOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This EcsDocumentTypes (" + ecsDocumentTypes + ") cannot be destroyed since the PricelistInternalProductcodeDocumentMap " + pricelistInternalProductcodeDocumentMapCollectionOrphanCheckPricelistInternalProductcodeDocumentMap + " in its pricelistInternalProductcodeDocumentMapCollection field has a non-nullable DOCUMENTTYPESid field.");
+                illegalOrphanMessages.add("This EcsDocumentTypes (" + ecsDocumentTypes + ") cannot be destroyed since the CdFileDetails " + cdFileDetailsesOrphanCheckCdFileDetails + " in its cdFileDetailses field has a non-nullable ecsDocumentTypes field.");
             }
-            Collection<CdFileDetails> cdFileDetailsCollectionOrphanCheck = ecsDocumentTypes.getCdFileDetailsCollection();
-            for (CdFileDetails cdFileDetailsCollectionOrphanCheckCdFileDetails : cdFileDetailsCollectionOrphanCheck) {
+            Set<PricelistInternalProductcodeDocumentMap> pricelistInternalProductcodeDocumentMapsOrphanCheck = ecsDocumentTypes.getPricelistInternalProductcodeDocumentMaps();
+            for (PricelistInternalProductcodeDocumentMap pricelistInternalProductcodeDocumentMapsOrphanCheckPricelistInternalProductcodeDocumentMap : pricelistInternalProductcodeDocumentMapsOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This EcsDocumentTypes (" + ecsDocumentTypes + ") cannot be destroyed since the CdFileDetails " + cdFileDetailsCollectionOrphanCheckCdFileDetails + " in its cdFileDetailsCollection field has a non-nullable DOCUMENTTYPESidRef field.");
+                illegalOrphanMessages.add("This EcsDocumentTypes (" + ecsDocumentTypes + ") cannot be destroyed since the PricelistInternalProductcodeDocumentMap " + pricelistInternalProductcodeDocumentMapsOrphanCheckPricelistInternalProductcodeDocumentMap + " in its pricelistInternalProductcodeDocumentMaps field has a non-nullable ecsDocumentTypes field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
@@ -239,7 +240,7 @@ public class EcsDocumentTypesJpaController implements Serializable {
         }
     }
 
-    public EcsDocumentTypes findEcsDocumentTypes(Integer id) {
+    public EcsDocumentTypes findEcsDocumentTypes(int id) {
         EntityManager em = getEntityManager();
         try {
             return em.find(EcsDocumentTypes.class, id);

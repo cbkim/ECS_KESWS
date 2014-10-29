@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 29, 2014 3:56:08 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="databaselayer.ecs_kesws.entities.InternalProductcodes" table="INTERNAL_PRODUCTCODES" catalog="ECS_KESWS" optimistic-lock="version">
+        <id name="ipcId" type="java.lang.Integer">
+            <column name="IPC_ID" />
+            <generator class="identity" />
+        </id>
+        <property name="hscode" type="string">
+            <column name="HSCODE" length="45" />
+        </property>
+        <property name="internalProductCode" type="string">
+            <column name="Internal_Product_Code" />
+        </property>
+        <property name="hscodeDesc" type="string">
+            <column name="HSCODE_DESC" />
+        </property>
+        <property name="commodityCategory" type="string">
+            <column name="Commodity_Category" />
+        </property>
+        <property name="commodityType" type="string">
+            <column name="Commodity_Type" />
+        </property>
+        <property name="commodityTechnicalName" type="string">
+            <column name="Commodity_Technical_Name" />
+        </property>
+        <property name="commodityVariety" type="string">
+            <column name="Commodity_Variety" />
+        </property>
+        <property name="commodityForm" type="string">
+            <column name="Commodity_Form" />
+        </property>
+        <property name="priceListIpcMapIdRef" type="java.lang.Integer">
+            <column name="Price_List_IPC_MAP_ID_Ref" />
+        </property>
+        <property name="isActiveIpc" type="java.lang.Integer">
+            <column name="isActive_IPC" />
+        </property>
+        <property name="dateCreated" type="timestamp">
+            <column name="Date_Created" length="19" />
+        </property>
+        <property name="dateDeactivated" type="timestamp">
+            <column name="Date_Deactivated" length="19" />
+        </property>
+        <set name="pricelistInternalProductcodeDocumentMaps" table="PRICELIST_INTERNAL_PRODUCTCODE_DOCUMENT_MAP" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="INTERNAL_PRODUCTCODES_IPC_ID_Ref" not-null="true" />
+            </key>
+            <one-to-many class="databaselayer.ecs_kesws.entities.PricelistInternalProductcodeDocumentMap" />
+        </set>
+    </class>
+</hibernate-mapping>

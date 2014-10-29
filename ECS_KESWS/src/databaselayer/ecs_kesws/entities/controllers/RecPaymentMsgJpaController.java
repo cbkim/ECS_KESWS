@@ -14,9 +14,9 @@ import javax.persistence.criteria.Root;
 import databaselayer.ecs_kesws.entities.ResPaymentMsg;
 import databaselayer.ecs_kesws.entities.TransactionLogs;
 import databaselayer.ecs_kesws.entities.controllers.exceptions.NonexistentEntityException;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
@@ -36,36 +36,36 @@ public class RecPaymentMsgJpaController implements Serializable {
     }
 
     public void create(RecPaymentMsg recPaymentMsg) {
-        if (recPaymentMsg.getTransactionLogsCollection() == null) {
-            recPaymentMsg.setTransactionLogsCollection(new ArrayList<TransactionLogs>());
+        if (recPaymentMsg.getTransactionLogses() == null) {
+            recPaymentMsg.setTransactionLogses(new HashSet<TransactionLogs>());
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            ResPaymentMsg sentPayementMsgPayementMsgId = recPaymentMsg.getSentPayementMsgPayementMsgId();
-            if (sentPayementMsgPayementMsgId != null) {
-                sentPayementMsgPayementMsgId = em.getReference(sentPayementMsgPayementMsgId.getClass(), sentPayementMsgPayementMsgId.getPayementMsgId());
-                recPaymentMsg.setSentPayementMsgPayementMsgId(sentPayementMsgPayementMsgId);
+            ResPaymentMsg resPaymentMsg = recPaymentMsg.getResPaymentMsg();
+            if (resPaymentMsg != null) {
+                resPaymentMsg = em.getReference(resPaymentMsg.getClass(), resPaymentMsg.getPayementMsgId());
+                recPaymentMsg.setResPaymentMsg(resPaymentMsg);
             }
-            Collection<TransactionLogs> attachedTransactionLogsCollection = new ArrayList<TransactionLogs>();
-            for (TransactionLogs transactionLogsCollectionTransactionLogsToAttach : recPaymentMsg.getTransactionLogsCollection()) {
-                transactionLogsCollectionTransactionLogsToAttach = em.getReference(transactionLogsCollectionTransactionLogsToAttach.getClass(), transactionLogsCollectionTransactionLogsToAttach.getLogID());
-                attachedTransactionLogsCollection.add(transactionLogsCollectionTransactionLogsToAttach);
+            Set<TransactionLogs> attachedTransactionLogses = new HashSet<TransactionLogs>();
+            for (TransactionLogs transactionLogsesTransactionLogsToAttach : recPaymentMsg.getTransactionLogses()) {
+                transactionLogsesTransactionLogsToAttach = em.getReference(transactionLogsesTransactionLogsToAttach.getClass(), transactionLogsesTransactionLogsToAttach.getLogId());
+                attachedTransactionLogses.add(transactionLogsesTransactionLogsToAttach);
             }
-            recPaymentMsg.setTransactionLogsCollection(attachedTransactionLogsCollection);
+            recPaymentMsg.setTransactionLogses(attachedTransactionLogses);
             em.persist(recPaymentMsg);
-            if (sentPayementMsgPayementMsgId != null) {
-                sentPayementMsgPayementMsgId.getRecPaymentMsgCollection().add(recPaymentMsg);
-                sentPayementMsgPayementMsgId = em.merge(sentPayementMsgPayementMsgId);
+            if (resPaymentMsg != null) {
+                resPaymentMsg.getRecPaymentMsgs().add(recPaymentMsg);
+                resPaymentMsg = em.merge(resPaymentMsg);
             }
-            for (TransactionLogs transactionLogsCollectionTransactionLogs : recPaymentMsg.getTransactionLogsCollection()) {
-                RecPaymentMsg oldRecPaymentMsgReceivedPaymentMsgIdOfTransactionLogsCollectionTransactionLogs = transactionLogsCollectionTransactionLogs.getRecPaymentMsgReceivedPaymentMsgId();
-                transactionLogsCollectionTransactionLogs.setRecPaymentMsgReceivedPaymentMsgId(recPaymentMsg);
-                transactionLogsCollectionTransactionLogs = em.merge(transactionLogsCollectionTransactionLogs);
-                if (oldRecPaymentMsgReceivedPaymentMsgIdOfTransactionLogsCollectionTransactionLogs != null) {
-                    oldRecPaymentMsgReceivedPaymentMsgIdOfTransactionLogsCollectionTransactionLogs.getTransactionLogsCollection().remove(transactionLogsCollectionTransactionLogs);
-                    oldRecPaymentMsgReceivedPaymentMsgIdOfTransactionLogsCollectionTransactionLogs = em.merge(oldRecPaymentMsgReceivedPaymentMsgIdOfTransactionLogsCollectionTransactionLogs);
+            for (TransactionLogs transactionLogsesTransactionLogs : recPaymentMsg.getTransactionLogses()) {
+                RecPaymentMsg oldRecPaymentMsgOfTransactionLogsesTransactionLogs = transactionLogsesTransactionLogs.getRecPaymentMsg();
+                transactionLogsesTransactionLogs.setRecPaymentMsg(recPaymentMsg);
+                transactionLogsesTransactionLogs = em.merge(transactionLogsesTransactionLogs);
+                if (oldRecPaymentMsgOfTransactionLogsesTransactionLogs != null) {
+                    oldRecPaymentMsgOfTransactionLogsesTransactionLogs.getTransactionLogses().remove(transactionLogsesTransactionLogs);
+                    oldRecPaymentMsgOfTransactionLogsesTransactionLogs = em.merge(oldRecPaymentMsgOfTransactionLogsesTransactionLogs);
                 }
             }
             em.getTransaction().commit();
@@ -82,44 +82,44 @@ public class RecPaymentMsgJpaController implements Serializable {
             em = getEntityManager();
             em.getTransaction().begin();
             RecPaymentMsg persistentRecPaymentMsg = em.find(RecPaymentMsg.class, recPaymentMsg.getReceivedPaymentMsgId());
-            ResPaymentMsg sentPayementMsgPayementMsgIdOld = persistentRecPaymentMsg.getSentPayementMsgPayementMsgId();
-            ResPaymentMsg sentPayementMsgPayementMsgIdNew = recPaymentMsg.getSentPayementMsgPayementMsgId();
-            Collection<TransactionLogs> transactionLogsCollectionOld = persistentRecPaymentMsg.getTransactionLogsCollection();
-            Collection<TransactionLogs> transactionLogsCollectionNew = recPaymentMsg.getTransactionLogsCollection();
-            if (sentPayementMsgPayementMsgIdNew != null) {
-                sentPayementMsgPayementMsgIdNew = em.getReference(sentPayementMsgPayementMsgIdNew.getClass(), sentPayementMsgPayementMsgIdNew.getPayementMsgId());
-                recPaymentMsg.setSentPayementMsgPayementMsgId(sentPayementMsgPayementMsgIdNew);
+            ResPaymentMsg resPaymentMsgOld = persistentRecPaymentMsg.getResPaymentMsg();
+            ResPaymentMsg resPaymentMsgNew = recPaymentMsg.getResPaymentMsg();
+            Set<TransactionLogs> transactionLogsesOld = persistentRecPaymentMsg.getTransactionLogses();
+            Set<TransactionLogs> transactionLogsesNew = recPaymentMsg.getTransactionLogses();
+            if (resPaymentMsgNew != null) {
+                resPaymentMsgNew = em.getReference(resPaymentMsgNew.getClass(), resPaymentMsgNew.getPayementMsgId());
+                recPaymentMsg.setResPaymentMsg(resPaymentMsgNew);
             }
-            Collection<TransactionLogs> attachedTransactionLogsCollectionNew = new ArrayList<TransactionLogs>();
-            for (TransactionLogs transactionLogsCollectionNewTransactionLogsToAttach : transactionLogsCollectionNew) {
-                transactionLogsCollectionNewTransactionLogsToAttach = em.getReference(transactionLogsCollectionNewTransactionLogsToAttach.getClass(), transactionLogsCollectionNewTransactionLogsToAttach.getLogID());
-                attachedTransactionLogsCollectionNew.add(transactionLogsCollectionNewTransactionLogsToAttach);
+            Set<TransactionLogs> attachedTransactionLogsesNew = new HashSet<TransactionLogs>();
+            for (TransactionLogs transactionLogsesNewTransactionLogsToAttach : transactionLogsesNew) {
+                transactionLogsesNewTransactionLogsToAttach = em.getReference(transactionLogsesNewTransactionLogsToAttach.getClass(), transactionLogsesNewTransactionLogsToAttach.getLogId());
+                attachedTransactionLogsesNew.add(transactionLogsesNewTransactionLogsToAttach);
             }
-            transactionLogsCollectionNew = attachedTransactionLogsCollectionNew;
-            recPaymentMsg.setTransactionLogsCollection(transactionLogsCollectionNew);
+            transactionLogsesNew = attachedTransactionLogsesNew;
+            recPaymentMsg.setTransactionLogses(transactionLogsesNew);
             recPaymentMsg = em.merge(recPaymentMsg);
-            if (sentPayementMsgPayementMsgIdOld != null && !sentPayementMsgPayementMsgIdOld.equals(sentPayementMsgPayementMsgIdNew)) {
-                sentPayementMsgPayementMsgIdOld.getRecPaymentMsgCollection().remove(recPaymentMsg);
-                sentPayementMsgPayementMsgIdOld = em.merge(sentPayementMsgPayementMsgIdOld);
+            if (resPaymentMsgOld != null && !resPaymentMsgOld.equals(resPaymentMsgNew)) {
+                resPaymentMsgOld.getRecPaymentMsgs().remove(recPaymentMsg);
+                resPaymentMsgOld = em.merge(resPaymentMsgOld);
             }
-            if (sentPayementMsgPayementMsgIdNew != null && !sentPayementMsgPayementMsgIdNew.equals(sentPayementMsgPayementMsgIdOld)) {
-                sentPayementMsgPayementMsgIdNew.getRecPaymentMsgCollection().add(recPaymentMsg);
-                sentPayementMsgPayementMsgIdNew = em.merge(sentPayementMsgPayementMsgIdNew);
+            if (resPaymentMsgNew != null && !resPaymentMsgNew.equals(resPaymentMsgOld)) {
+                resPaymentMsgNew.getRecPaymentMsgs().add(recPaymentMsg);
+                resPaymentMsgNew = em.merge(resPaymentMsgNew);
             }
-            for (TransactionLogs transactionLogsCollectionOldTransactionLogs : transactionLogsCollectionOld) {
-                if (!transactionLogsCollectionNew.contains(transactionLogsCollectionOldTransactionLogs)) {
-                    transactionLogsCollectionOldTransactionLogs.setRecPaymentMsgReceivedPaymentMsgId(null);
-                    transactionLogsCollectionOldTransactionLogs = em.merge(transactionLogsCollectionOldTransactionLogs);
+            for (TransactionLogs transactionLogsesOldTransactionLogs : transactionLogsesOld) {
+                if (!transactionLogsesNew.contains(transactionLogsesOldTransactionLogs)) {
+                    transactionLogsesOldTransactionLogs.setRecPaymentMsg(null);
+                    transactionLogsesOldTransactionLogs = em.merge(transactionLogsesOldTransactionLogs);
                 }
             }
-            for (TransactionLogs transactionLogsCollectionNewTransactionLogs : transactionLogsCollectionNew) {
-                if (!transactionLogsCollectionOld.contains(transactionLogsCollectionNewTransactionLogs)) {
-                    RecPaymentMsg oldRecPaymentMsgReceivedPaymentMsgIdOfTransactionLogsCollectionNewTransactionLogs = transactionLogsCollectionNewTransactionLogs.getRecPaymentMsgReceivedPaymentMsgId();
-                    transactionLogsCollectionNewTransactionLogs.setRecPaymentMsgReceivedPaymentMsgId(recPaymentMsg);
-                    transactionLogsCollectionNewTransactionLogs = em.merge(transactionLogsCollectionNewTransactionLogs);
-                    if (oldRecPaymentMsgReceivedPaymentMsgIdOfTransactionLogsCollectionNewTransactionLogs != null && !oldRecPaymentMsgReceivedPaymentMsgIdOfTransactionLogsCollectionNewTransactionLogs.equals(recPaymentMsg)) {
-                        oldRecPaymentMsgReceivedPaymentMsgIdOfTransactionLogsCollectionNewTransactionLogs.getTransactionLogsCollection().remove(transactionLogsCollectionNewTransactionLogs);
-                        oldRecPaymentMsgReceivedPaymentMsgIdOfTransactionLogsCollectionNewTransactionLogs = em.merge(oldRecPaymentMsgReceivedPaymentMsgIdOfTransactionLogsCollectionNewTransactionLogs);
+            for (TransactionLogs transactionLogsesNewTransactionLogs : transactionLogsesNew) {
+                if (!transactionLogsesOld.contains(transactionLogsesNewTransactionLogs)) {
+                    RecPaymentMsg oldRecPaymentMsgOfTransactionLogsesNewTransactionLogs = transactionLogsesNewTransactionLogs.getRecPaymentMsg();
+                    transactionLogsesNewTransactionLogs.setRecPaymentMsg(recPaymentMsg);
+                    transactionLogsesNewTransactionLogs = em.merge(transactionLogsesNewTransactionLogs);
+                    if (oldRecPaymentMsgOfTransactionLogsesNewTransactionLogs != null && !oldRecPaymentMsgOfTransactionLogsesNewTransactionLogs.equals(recPaymentMsg)) {
+                        oldRecPaymentMsgOfTransactionLogsesNewTransactionLogs.getTransactionLogses().remove(transactionLogsesNewTransactionLogs);
+                        oldRecPaymentMsgOfTransactionLogsesNewTransactionLogs = em.merge(oldRecPaymentMsgOfTransactionLogsesNewTransactionLogs);
                     }
                 }
             }
@@ -152,15 +152,15 @@ public class RecPaymentMsgJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The recPaymentMsg with id " + id + " no longer exists.", enfe);
             }
-            ResPaymentMsg sentPayementMsgPayementMsgId = recPaymentMsg.getSentPayementMsgPayementMsgId();
-            if (sentPayementMsgPayementMsgId != null) {
-                sentPayementMsgPayementMsgId.getRecPaymentMsgCollection().remove(recPaymentMsg);
-                sentPayementMsgPayementMsgId = em.merge(sentPayementMsgPayementMsgId);
+            ResPaymentMsg resPaymentMsg = recPaymentMsg.getResPaymentMsg();
+            if (resPaymentMsg != null) {
+                resPaymentMsg.getRecPaymentMsgs().remove(recPaymentMsg);
+                resPaymentMsg = em.merge(resPaymentMsg);
             }
-            Collection<TransactionLogs> transactionLogsCollection = recPaymentMsg.getTransactionLogsCollection();
-            for (TransactionLogs transactionLogsCollectionTransactionLogs : transactionLogsCollection) {
-                transactionLogsCollectionTransactionLogs.setRecPaymentMsgReceivedPaymentMsgId(null);
-                transactionLogsCollectionTransactionLogs = em.merge(transactionLogsCollectionTransactionLogs);
+            Set<TransactionLogs> transactionLogses = recPaymentMsg.getTransactionLogses();
+            for (TransactionLogs transactionLogsesTransactionLogs : transactionLogses) {
+                transactionLogsesTransactionLogs.setRecPaymentMsg(null);
+                transactionLogsesTransactionLogs = em.merge(transactionLogsesTransactionLogs);
             }
             em.remove(recPaymentMsg);
             em.getTransaction().commit();

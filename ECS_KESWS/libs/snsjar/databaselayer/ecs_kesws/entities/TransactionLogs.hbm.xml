@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 29, 2014 3:56:08 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="databaselayer.ecs_kesws.entities.TransactionLogs" table="TRANSACTION_LOGS" catalog="ECS_KESWS" optimistic-lock="version">
+        <id name="logId" type="java.lang.Integer">
+            <column name="Log_ID" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="logTypes" class="databaselayer.ecs_kesws.entities.LogTypes" fetch="select">
+            <column name="LOG_TYPES_LOG_ID_LEVEL" not-null="true" />
+        </many-to-one>
+        <many-to-one name="recCdFileMsg" class="databaselayer.ecs_kesws.entities.RecCdFileMsg" fetch="select">
+            <column name="REC_CD_FILE_MSG_REC_CD_FILE_ID" />
+        </many-to-one>
+        <many-to-one name="recPaymentMsg" class="databaselayer.ecs_kesws.entities.RecPaymentMsg" fetch="select">
+            <column name="REC_PAYMENT_MSG_RECEIVED_PAYMENT_MSG_ID" />
+        </many-to-one>
+        <many-to-one name="resCdFileMsg" class="databaselayer.ecs_kesws.entities.ResCdFileMsg" fetch="select">
+            <column name="RES_CD_FILE_MSG_RES_CD_FILE_ID" not-null="true" />
+        </many-to-one>
+        <many-to-one name="resPaymentMsg" class="databaselayer.ecs_kesws.entities.ResPaymentMsg" fetch="select">
+            <column name="RES_PAYMENT_MSG_PAYEMENT_MSG_ID" />
+        </many-to-one>
+        <property name="logDetails" type="string">
+            <column name="Log_Details" length="65535" not-null="true" />
+        </property>
+        <property name="dateTimeLogged" type="timestamp">
+            <column name="Date_Time_Logged" length="19" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>
