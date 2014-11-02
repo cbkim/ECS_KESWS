@@ -51,8 +51,12 @@ public class RecCdFileMsg  implements java.io.Serializable {
 
     public RecCdFileMsg() {
     }
-
-	
+  public RecCdFileMsg(MessageTypes messageTypes, String fileName, Date receivedDateTime, int isFileXmlValid) {
+        this.messageTypes = messageTypes;
+        this.fileName = fileName;
+        this.receivedDateTime = receivedDateTime;
+        this.isFileXmlValid = isFileXmlValid; 
+    }
     public RecCdFileMsg(MessageTypes messageTypes, String fileName, Date receivedDateTime, int isFileXmlValid, int ecsConsignementIdRef) {
         this.messageTypes = messageTypes;
         this.fileName = fileName;

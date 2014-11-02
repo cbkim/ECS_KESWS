@@ -71,7 +71,8 @@ final public class ConfigMapper {
                     setSenderId(eElement.getElementsByTagName("SenderId").item(0).getTextContent());
                     setEmail1(eElement.getElementsByTagName("Email1").item(0).getTextContent());
                     setEmail2(eElement.getElementsByTagName("Email2").item(0).getTextContent());
-                    for (int temp1 = 1; temp1 < 23; temp1++) {
+                    //modified to receive one type of file for import
+                    for (int temp1 = 1; temp1 < 1; temp1++) {
                         setFilesTypestoReceive(eElement.getElementsByTagName("InboxFilesType" + (temp1) + "toReceive").item(0).getTextContent());
                     }
                 }

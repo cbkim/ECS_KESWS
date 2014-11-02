@@ -19,7 +19,11 @@ import xmlparser.ECSConsignmentDoc;
 import xmlparser.KESWSConsignmentDoc;
 import xmlparser.KESWSConsignmentDoc.DocumentDetails.ConsignmentDocDetails.CDProductDetails.ItemDetails;
 import UtilityPackage.UtilityClass;
+import databaselayer.ecs_kesws.entities.MessageTypes;
+import databaselayer.ecs_kesws.entities.RecCdFileMsg;
+import databaselayer.ecs_kesws.entities.controllers.MessageTypesJpaController;
 import java.text.ParseException;
+import testers.DBTester;
 
 public class DBDAO {
 
@@ -27,22 +31,7 @@ public class DBDAO {
     UtilityClass utilclass;
     //  DBConnector dao;
     XmlFileMapper xmlmapper;
-    String addetails1 = " ";
-    String addetails2 = " ";
-    String addetails3 = " ";
-    String addetails4 = " ";
-    String addetails5 = " ";
-    String addetails6 = " ";
-    String addetails7 = " ";
-    String addetails8 = " ";
-    String transTypedetails1 = " ";
-    String transTypedetails2 = " ";
-    String transTypedetails3 = " ";
-    String transTypedetails4 = " ";
-    String transTypedetails5 = " ";
-    String transTypedetails6 = " ";
-    String transTypedetails7 = " ";
-    String transTypedetails8 = " ";
+    
 
     public DBDAO() {
 
@@ -818,7 +807,22 @@ finally {
         Integer issueStatus = -1;
         String additionalTransactionDetails = "";
         Integer relatedTransactionId = 0;
-
+        String addetails1 = " ";
+    String addetails2 = " ";
+    String addetails3 = " ";
+    String addetails4 = " ";
+    String addetails5 = " ";
+    String addetails6 = " ";
+    String addetails7 = " ";
+    String addetails8 = " ";
+    String transTypedetails1 = " ";
+    String transTypedetails2 = " ";
+    String transTypedetails3 = " ";
+    String transTypedetails4 = " ";
+    String transTypedetails5 = " ";
+    String transTypedetails6 = " ";
+    String transTypedetails7 = " ";
+    String transTypedetails8 = " ";
         try {
             Statement stmt = null;
 
@@ -1123,7 +1127,11 @@ finally {
 
         }
     }
-
+    
+   public RecCdFileMsg getLatestRecCdFileMsg() {
+      return null;
+   }
+    
     public int getLastTransactionId() {
         int lastid = 0;
         DBConnector dao = new DBConnector();
@@ -2116,4 +2124,20 @@ finally {
         }
         return CODISOCODE;
     }
+   
+     public RecCdFileMsg log_received_file(String filename,int message_type){
+          int messageTypeKey = 26; 
+      
+        int ecsConsignementIdRef = 28; 
+       
+        //INSERT A RECORD INTO THE TABLE Message_Type
+        //The record has only the primary key
+        MessageTypes messageTypes = new MessageTypes(messageTypeKey);
+        MessageTypesJpaController control = new MessageTypesJpaController(emf);
+        try {
+            control.create(messageTypes);
+        } catch (Exception ex) {
+           Logger.getLogger(DBTester.class.getName()).log(Level.SEVERE, null, ex);
+        }
+}
 }

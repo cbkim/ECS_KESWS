@@ -46,26 +46,22 @@ public class XMLFileValidator {
 
             try {
                 validator.validate(xmlFile);
-                System.out.println(xmlFile.getSystemId() + " is valid");
-
                 return true;
             } catch (SAXException e) {
-                System.out.println(xmlFile.getSystemId() + " is NOT valid");
-                System.out.println("Reason: " + e.getLocalizedMessage());
+               // System.out.println(xmlFile.getSystemId() + " is NOT valid");
+                // System.out.println("Reason: " + e.getLocalizedMessage().replace("'", " "));
                 setErrorDetails("Reason: " + e.getLocalizedMessage().replace("'", " "));
                 return false;
             } catch (IOException ex) {
-                Logger.getLogger(XMLFileValidator.class.getName()).log(Level.SEVERE, null, ex);
+                // Logger.getLogger(XMLFileValidator.class.getName()).log(Level.SEVERE, null, ex);
                 setErrorDetails("Reason: " + ex.getLocalizedMessage().replace("'", " "));
                 return false;
             }
         } catch (SAXException ex) {
-            Logger.getLogger(XMLFileValidator.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(XMLFileValidator.class.getName()).log(Level.SEVERE, null, ex);
             setErrorDetails("Reason: " + ex.getLocalizedMessage().replace("'", " "));
             return false;
-        }
-        finally
-        {
+        } finally {
             return false;
         }
     }
